@@ -42,7 +42,8 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 
 ## Constraints
 
-- **Tech**: TypeScript, browser-only — no Node.js runtime, no external routing services
+- **Tech**: TypeScript throughout — no JavaScript, no backend, pure browser runtime
+- **Rendering**: MapLibre GL JS for tile-based map rendering — OSM road network and animation overlaid on top
 - **Input**: Gzipped OSM XML (.osm.gz) — must decompress and parse in-browser
 - **Scope**: Portfolio demo — correctness of routing > exhaustive edge case handling
 
@@ -53,6 +54,7 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 | Pre-calculate path before animating | "The optimal path should always be highlighted in red as it grows" — requires knowing the path upfront | — Pending |
 | Gzipped OSM input only | User specified .osm.gz — need in-browser decompression (DecompressionStream API) | — Pending |
 | Client-side only | Portfolio demo context — no backend needed, simpler deployment | — Pending |
+| MapLibre GL JS for rendering | User specified — tile-based renderer, OSM routing graph and animation overlaid as custom layers | — Pending |
 
 ---
 *Last updated: 2026-03-12 after initialization*
