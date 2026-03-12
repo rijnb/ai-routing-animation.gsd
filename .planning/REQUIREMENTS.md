@@ -67,29 +67,29 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PIPE-01 | Phase ? | Pending |
-| PIPE-02 | Phase ? | Pending |
-| PIPE-03 | Phase ? | Pending |
-| PIPE-04 | Phase ? | Pending |
-| MAP-01 | Phase ? | Pending |
-| MAP-02 | Phase ? | Pending |
-| MAP-03 | Phase ? | Pending |
-| ROUT-01 | Phase ? | Pending |
-| ROUT-02 | Phase ? | Pending |
-| ROUT-03 | Phase ? | Pending |
-| ANIM-01 | Phase ? | Pending |
-| ANIM-02 | Phase ? | Pending |
-| ANIM-03 | Phase ? | Pending |
-| STAT-01 | Phase ? | Pending |
-| STAT-02 | Phase ? | Pending |
-| STAT-03 | Phase ? | Pending |
-| MAP-04 | Phase ? | Pending |
+| PIPE-01 | Phase 1 | Pending |
+| PIPE-02 | Phase 1 | Pending |
+| PIPE-03 | Phase 2 | Pending |
+| PIPE-04 | Phase 1 | Pending |
+| MAP-01 | Phase 2 | Pending |
+| MAP-02 | Phase 2 | Pending |
+| MAP-03 | Phase 1 | Pending |
+| MAP-04 | Phase 4 | Pending |
+| ROUT-01 | Phase 2 | Pending |
+| ROUT-02 | Phase 2 | Pending |
+| ROUT-03 | Phase 2 | Pending |
+| ANIM-01 | Phase 3 | Pending |
+| ANIM-02 | Phase 3 | Pending |
+| ANIM-03 | Phase 3 | Pending |
+| STAT-01 | Phase 4 | Pending |
+| STAT-02 | Phase 4 | Pending |
+| STAT-03 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17 ⚠️
+- Mapped to phases: 17
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after initial definition*
+*Last updated: 2026-03-12 after roadmap creation*
