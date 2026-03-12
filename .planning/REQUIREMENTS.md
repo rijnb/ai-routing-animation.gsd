@@ -7,10 +7,10 @@
 
 ### Data Pipeline
 
-- [ ] **PIPE-01**: User can upload a .osm.gz file via file picker or drag-and-drop
-- [ ] **PIPE-02**: Browser decompresses and parses the OSM XML in a Web Worker (UI remains responsive during loading)
+- [x] **PIPE-01**: User can upload a .osm.gz file via file picker or drag-and-drop
+- [x] **PIPE-02**: Browser decompresses and parses the OSM XML in a Web Worker (UI remains responsive during loading)
 - [ ] **PIPE-03**: Graph builder detects disconnected components and warns user if selected source/destination cannot be connected
-- [ ] **PIPE-04**: Parsed road network is rendered as a visible overlay layer on the MapLibre base map
+- [x] **PIPE-04**: Parsed road network is rendered as a visible overlay layer on the MapLibre base map
 
 ### Map Interaction
 
@@ -67,10 +67,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PIPE-01 | Phase 1 | Pending |
-| PIPE-02 | Phase 1 | Pending |
+| PIPE-01 | Phase 1 | Complete |
+| PIPE-02 | Phase 1 | Complete |
 | PIPE-03 | Phase 2 | Pending |
-| PIPE-04 | Phase 1 | Pending |
+| PIPE-04 | Phase 1 | Complete |
 | MAP-01 | Phase 2 | Pending |
 | MAP-02 | Phase 2 | Pending |
 | MAP-03 | Phase 1 | Pending |
