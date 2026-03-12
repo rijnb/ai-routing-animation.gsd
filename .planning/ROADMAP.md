@@ -12,7 +12,7 @@ This roadmap delivers a browser-based A* pathfinding visualizer on real OpenStre
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Data Pipeline and Map Foundation** - Upload .osm.gz, parse in Web Worker, render road network on MapLibre base map
+- [x] **Phase 1: Data Pipeline and Map Foundation** - Upload .osm.gz, parse in Web Worker, render road network on MapLibre base map (completed 2026-03-12)
 - [ ] **Phase 2: Routing Engine** - Click-to-set source/destination with segment snapping, A* with mode-aware search history, disconnected component handling
 - [ ] **Phase 3: Search Animation** - Animated frontier expansion and simultaneous path growth with speed control
 - [ ] **Phase 4: Stats and Marker Interaction** - Live stats panel, drag-to-reposition markers with route recalculation
@@ -89,7 +89,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Pipeline and Map Foundation | 2/3 | In Progress|  |
+| 1. Data Pipeline and Map Foundation | 3/3 | Complete   | 2026-03-12 |
 | 2. Routing Engine | 0/3 | Not started | - |
 | 3. Search Animation | 0/2 | Not started | - |
 | 4. Stats and Marker Interaction | 0/2 | Not started | - |

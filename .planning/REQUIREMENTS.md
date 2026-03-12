@@ -16,7 +16,7 @@
 
 - [ ] **MAP-01**: User can click the map to set a source point — snaps to the nearest road segment suitable for the selected routing mode within 200m, at the interpolated point on that segment
 - [ ] **MAP-02**: User can click the map to set a destination point — snaps to the nearest suitable road segment within 200m, at the interpolated point on that segment
-- [ ] **MAP-03**: User can pan and zoom the map at any time, including during animation
+- [x] **MAP-03**: User can pan and zoom the map at any time, including during animation
 - [ ] **MAP-04**: User can drag the source or destination marker to a new position, triggering a full route recalculation
 
 ### Routing
@@ -73,7 +73,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PIPE-04 | Phase 1 | Complete |
 | MAP-01 | Phase 2 | Pending |
 | MAP-02 | Phase 2 | Pending |
-| MAP-03 | Phase 1 | Pending |
+| MAP-03 | Phase 1 | Complete |
 | MAP-04 | Phase 4 | Pending |
 | ROUT-01 | Phase 2 | Pending |
 | ROUT-02 | Phase 2 | Pending |
