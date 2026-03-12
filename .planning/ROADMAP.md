@@ -28,12 +28,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. The browser UI remains responsive (no freeze) while the file is being decompressed and parsed
   3. The parsed road network appears as a visible overlay on top of MapLibre base map tiles
   4. User can pan and zoom the map freely, including while the road overlay is displayed
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md — Scaffold Vite + React + TypeScript project with Vitest test infrastructure and Wave 0 failing test stubs
+- [ ] 01-02-PLAN.md — Implement OSM parsing pipeline: osmParser, graphBuilder, osmWorker, useOsmLoader hook (all tests GREEN)
+- [ ] 01-03-PLAN.md — Build all UI components (MapView, ApiKeyModal, SettingsPanel, DropZone, LoadingOverlay) and wire the complete application
 
 ### Phase 2: Routing Engine
 **Goal**: Users can click two points on the map, select a routing mode, and get a computed route with full search history ready for animation
