@@ -34,6 +34,11 @@ export function MapView({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const loadedRef = useRef(false)
+  // Keep a stable ref to onMapClick so the click listener always calls the latest version
+  const onMapClickRef = useRef(onMapClick)
+  useEffect(() => {
+    onMapClickRef.current = onMapClick
+  })
 
   // Create map once (re-mounts if apiKey changes)
   useEffect(() => {
@@ -53,7 +58,7 @@ export function MapView({
     })
 
     map.on('click', (e) => {
-      onMapClick?.([e.lngLat.lng, e.lngLat.lat])
+      onMapClickRef.current?.([e.lngLat.lng, e.lngLat.lat])
     })
 
     mapRef.current = map
