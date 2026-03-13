@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: "Checkpoint: Task 3 human-verify in 01-03-PLAN.md"
-last_updated: "2026-03-12T21:14:52.402Z"
+stopped_at: Completed 01-03-PLAN.md — Phase 1 fully verified
+last_updated: "2026-03-13T08:17:20.634Z"
 last_activity: 2026-03-12 — Roadmap created
 progress:
   total_phases: 4
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-data-pipeline-and-map-foundation P01 | 4 | 2 tasks | 19 files |
 | Phase 01-data-pipeline-and-map-foundation P02 | 2 | 2 tasks | 5 files |
 | Phase 01-data-pipeline-and-map-foundation P03 | 130 | 2 tasks | 10 files |
+| Phase 01-data-pipeline-and-map-foundation P03 | 526204min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,7 @@ Recent decisions affecting current work:
 - [Phase 01-data-pipeline-and-map-foundation]: apiKeyStore extracted as separate module to keep modal and settings panel testable
 - [Phase 01-data-pipeline-and-map-foundation]: MapView re-mounts map on apiKey change — simplest correct behavior when key cleared and re-entered
 - [Phase 01-data-pipeline-and-map-foundation]: LoadingOverlay uses opacity transition + pointer-events:none (not display:none) for smooth UX
+- [Phase 01-data-pipeline-and-map-foundation]: rawGzipStaticPlugin in vite.config.ts: serve public/*.gz as raw binary (no Content-Encoding) so browser does not transparently decompress before worker gunzipSync
 
 ### Pending Todos
 
@@ -83,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-12T21:14:52.400Z
-Stopped at: Checkpoint: Task 3 human-verify in 01-03-PLAN.md
+Last session: 2026-03-13T08:17:20.631Z
+Stopped at: Completed 01-03-PLAN.md — Phase 1 fully verified
 Resume file: None
