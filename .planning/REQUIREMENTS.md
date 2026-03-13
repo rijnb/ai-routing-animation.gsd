@@ -27,9 +27,9 @@
 
 ### Animation
 
-- [ ] **ANIM-01**: Search frontier expands node-by-node, rendering visited/frontier nodes visually distinct
-- [ ] **ANIM-02**: Optimal path grows in red simultaneously with frontier expansion (pre-calculated, always visible)
-- [ ] **ANIM-03**: User can adjust animation speed via a speed slider
+- [x] **ANIM-01**: Search frontier expands node-by-node, rendering visited/frontier nodes visually distinct
+- [x] **ANIM-02**: Optimal path grows in red simultaneously with frontier expansion (pre-calculated, always visible)
+- [x] **ANIM-03**: User can adjust animation speed via a speed slider
 
 ### Stats
 
@@ -78,9 +78,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ROUT-01 | Phase 2 | Complete |
 | ROUT-02 | Phase 2 | Complete |
 | ROUT-03 | Phase 2 | Complete |
-| ANIM-01 | Phase 3 | Pending |
-| ANIM-02 | Phase 3 | Pending |
-| ANIM-03 | Phase 3 | Pending |
+| ANIM-01 | Phase 3 | Complete |
+| ANIM-02 | Phase 3 | Complete |
+| ANIM-03 | Phase 3 | Complete |
 | STAT-01 | Phase 4 | Pending |
 | STAT-02 | Phase 4 | Pending |
 | STAT-03 | Phase 4 | Pending |
