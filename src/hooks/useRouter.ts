@@ -11,6 +11,7 @@ export interface RouterState {
   setMode: (m: RoutingMode) => void
   sourceSnap: SnapResult | null
   destSnap: SnapResult | null
+  lastSnapPoint: [number, number] | null
   route: RouteResult | null
   routeError: string | null
   handleMapClick: (lngLat: [number, number]) => void
@@ -27,6 +28,7 @@ export function useRouter(
   const clickCountRef = useRef<number>(0)
   const [sourceSnap, setSourceSnap] = useState<SnapResult | null>(null)
   const [destSnap, setDestSnap] = useState<SnapResult | null>(null)
+  const [lastSnapPoint, setLastSnapPoint] = useState<[number, number] | null>(null)
   const [route, setRoute] = useState<RouteResult | null>(null)
   const [routeError, setRouteError] = useState<string | null>(null)
 
@@ -98,19 +100,19 @@ export function useRouter(
       const count = clickCountRef.current
 
       if (count % 2 === 0) {
-        // Even click count → set source
+        // Even click count → set source; clear any existing destination and route
         setSourceSnap(snapResult)
         sourceSnapRef.current = snapResult
+        setDestSnap(null)
+        destSnapRef.current = null
+        setRoute(null)
+        setLastSnapPoint(snapResult.snappedPoint)
         clickCountRef.current = count + 1
-
-        // If dest already set, trigger re-route with new source
-        if (destSnapRef.current) {
-          triggerRoute(snapResult, destSnapRef.current, modeRef.current)
-        }
       } else {
         // Odd click count → set dest
         setDestSnap(snapResult)
         destSnapRef.current = snapResult
+        setLastSnapPoint(snapResult.snappedPoint)
         clickCountRef.current = count + 1
 
         // If source already set, trigger route
@@ -143,6 +145,7 @@ export function useRouter(
     setDestSnap(null)
     sourceSnapRef.current = null
     destSnapRef.current = null
+    setLastSnapPoint(null)
     setRoute(null)
     setRouteError(null)
   }, [])
@@ -152,6 +155,7 @@ export function useRouter(
     setMode,
     sourceSnap,
     destSnap,
+    lastSnapPoint,
     route,
     routeError,
     handleMapClick,

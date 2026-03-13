@@ -18,6 +18,7 @@ export default function App() {
     setMode,
     sourceSnap,
     destSnap,
+    lastSnapPoint,
     route,
     routeError,
     handleMapClick,
@@ -77,6 +78,7 @@ export default function App() {
           sourceSnap={sourceSnap}
           destSnap={destSnap}
           lastClickPoint={lastClickPoint}
+          lastSnapPoint={lastSnapPoint}
         />
       </div>
 

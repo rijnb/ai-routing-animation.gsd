@@ -20,6 +20,7 @@ interface MapViewProps {
   sourceSnap?: SnapResult | null
   destSnap?: SnapResult | null
   lastClickPoint?: [number, number] | null
+  lastSnapPoint?: [number, number] | null
 }
 
 export function MapView({
@@ -30,6 +31,7 @@ export function MapView({
   sourceSnap,
   destSnap,
   lastClickPoint,
+  lastSnapPoint,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
@@ -84,8 +86,8 @@ export function MapView({
     if (!map || !loadedRef.current) return
     updateRouteLayer(map, routePath ?? [])
     updateMarkersLayer(map, sourceSnap ?? null, destSnap ?? null)
-    updateSnapIndicatorLayer(map, lastClickPoint ?? null, sourceSnap?.snappedPoint ?? null)
-  }, [routePath, sourceSnap, destSnap, lastClickPoint])
+    updateSnapIndicatorLayer(map, lastClickPoint ?? null, lastSnapPoint ?? null)
+  }, [routePath, sourceSnap, destSnap, lastClickPoint, lastSnapPoint])
 
   return (
     <div
