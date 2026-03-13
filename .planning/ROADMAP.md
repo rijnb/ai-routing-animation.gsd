@@ -54,19 +54,20 @@ Plans:
 - [ ] 02-04-PLAN.md — Map integration + App wiring: route/marker/snap layers, full App.tsx wiring, human verify
 
 ### Phase 3: Search Animation
-**Goal**: Users watch the A* search frontier expand across the map while the optimal path grows in red — the core visual experience
+**Goal**: Users watch the A* search frontier expand across the map while the optimal path grows in yellow — the core visual experience
 **Depends on**: Phase 2
 **Requirements**: ANIM-01, ANIM-02, ANIM-03
 **Success Criteria** (what must be TRUE):
   1. The search frontier expands node-by-node on the map with visited and frontier nodes visually distinct from each other
-  2. The optimal path grows as a red line simultaneously with the frontier expansion, always visible
+  2. The optimal path grows as a yellow line simultaneously with the frontier expansion, always visible
   3. User can adjust animation speed via a slider — from slow (individual node steps visible) to fast (rapid sweep)
   4. Animation runs smoothly without browser tab memory growth or frame drops (GeoJSON updates throttled to ~30fps)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — TDD: pure animation utilities (filterHistory, slicePath, computeNodesPerFrame) RED then GREEN
+- [ ] 03-02-PLAN.md — MapLibre frontier circle layers + useAnimation rAF hook + route color yellow
+- [ ] 03-03-PLAN.md — SpeedPanel component, MapView/App.tsx wiring, human verify
 
 ### Phase 4: Stats and Marker Interaction
 **Goal**: Users get quantitative feedback on the route and can refine source/destination by dragging markers
@@ -92,5 +93,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Data Pipeline and Map Foundation | 3/3 | Complete   | 2026-03-13 |
 | 2. Routing Engine | 3/4 | In Progress|  |
-| 3. Search Animation | 0/2 | Not started | - |
+| 3. Search Animation | 0/3 | Not started | - |
 | 4. Stats and Marker Interaction | 0/2 | Not started | - |
