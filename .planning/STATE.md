@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-routing-engine/02-02-PLAN.md
-last_updated: "2026-03-13T11:25:14.985Z"
+stopped_at: Completed 02-routing-engine/02-03-PLAN.md
+last_updated: "2026-03-13T11:29:46.414Z"
 last_activity: 2026-03-12 — Roadmap created
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-data-pipeline-and-map-foundation P03 | 526204min | 3 tasks | 11 files |
 | Phase 02-routing-engine P01 | 4 | 2 tasks | 7 files |
 | Phase 02-routing-engine P02 | 5 | 2 tasks | 3 files |
+| Phase 02-routing-engine P03 | 3 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,9 @@ Recent decisions affecting current work:
 - [Phase 02-routing-engine]: React import required in .tsx test files: tsconfig.app.json excludes __tests__, so vitest does not get the react-jsx transform; explicit import React from 'react' resolves ReferenceError
 - [Phase 02-routing-engine]: buildAdjacency accepts (ways, nodes) as two separate args — test file is authoritative over plan spec
 - [Phase 02-routing-engine]: haversineMeters in router.ts as single source; graphBuilder and segmentSnap import from there
+- [Phase 02-routing-engine]: useRouter receives workerRef from useOsmLoader rather than owning its own worker — prevents duplicate workers
+- [Phase 02-routing-engine]: useOsmLoader switched from onmessage assignment to addEventListener to allow multiple listeners on same worker
+- [Phase 02-routing-engine]: Virtual node pattern for snapped routing: VIRTUAL_START/VIRTUAL_END in shallow-copied adjacency, never mutating shared state
 
 ### Pending Todos
 
@@ -91,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T11:25:14.983Z
-Stopped at: Completed 02-routing-engine/02-02-PLAN.md
+Last session: 2026-03-13T11:29:46.411Z
+Stopped at: Completed 02-routing-engine/02-03-PLAN.md
 Resume file: None
