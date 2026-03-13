@@ -9,21 +9,21 @@
 
 - [x] **PIPE-01**: User can upload a .osm.gz file via file picker or drag-and-drop
 - [x] **PIPE-02**: Browser decompresses and parses the OSM XML in a Web Worker (UI remains responsive during loading)
-- [ ] **PIPE-03**: Graph builder detects disconnected components and warns user if selected source/destination cannot be connected
+- [x] **PIPE-03**: Graph builder detects disconnected components and warns user if selected source/destination cannot be connected
 - [x] **PIPE-04**: Parsed road network is rendered as a visible overlay layer on the MapLibre base map
 
 ### Map Interaction
 
-- [ ] **MAP-01**: User can click the map to set a source point — snaps to the nearest road segment suitable for the selected routing mode within 200m, at the interpolated point on that segment
-- [ ] **MAP-02**: User can click the map to set a destination point — snaps to the nearest suitable road segment within 200m, at the interpolated point on that segment
+- [x] **MAP-01**: User can click the map to set a source point — snaps to the nearest road segment suitable for the selected routing mode within 200m, at the interpolated point on that segment
+- [x] **MAP-02**: User can click the map to set a destination point — snaps to the nearest suitable road segment within 200m, at the interpolated point on that segment
 - [x] **MAP-03**: User can pan and zoom the map at any time, including during animation
 - [ ] **MAP-04**: User can drag the source or destination marker to a new position, triggering a full route recalculation
 
 ### Routing
 
-- [ ] **ROUT-01**: A* pathfinding is computed with full search history recorded before animation begins; route starts and ends at the interpolated point on the source/destination road segment (not just at graph nodes)
-- [ ] **ROUT-02**: User can select routing mode: car, bicycle, or pedestrian
-- [ ] **ROUT-03**: Routing modes apply different estimated travel speeds and OSM access restrictions (e.g., motorways car-only, pedestrian paths walking-only)
+- [x] **ROUT-01**: A* pathfinding is computed with full search history recorded before animation begins; route starts and ends at the interpolated point on the source/destination road segment (not just at graph nodes)
+- [x] **ROUT-02**: User can select routing mode: car, bicycle, or pedestrian
+- [x] **ROUT-03**: Routing modes apply different estimated travel speeds and OSM access restrictions (e.g., motorways car-only, pedestrian paths walking-only)
 
 ### Animation
 
@@ -69,15 +69,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | PIPE-01 | Phase 1 | Complete |
 | PIPE-02 | Phase 1 | Complete |
-| PIPE-03 | Phase 2 | Pending |
+| PIPE-03 | Phase 2 | Complete |
 | PIPE-04 | Phase 1 | Complete |
-| MAP-01 | Phase 2 | Pending |
-| MAP-02 | Phase 2 | Pending |
+| MAP-01 | Phase 2 | Complete |
+| MAP-02 | Phase 2 | Complete |
 | MAP-03 | Phase 1 | Complete |
 | MAP-04 | Phase 4 | Pending |
-| ROUT-01 | Phase 2 | Pending |
-| ROUT-02 | Phase 2 | Pending |
-| ROUT-03 | Phase 2 | Pending |
+| ROUT-01 | Phase 2 | Complete |
+| ROUT-02 | Phase 2 | Complete |
+| ROUT-03 | Phase 2 | Complete |
 | ANIM-01 | Phase 3 | Pending |
 | ANIM-02 | Phase 3 | Pending |
 | ANIM-03 | Phase 3 | Pending |
