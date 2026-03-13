@@ -1,19 +1,41 @@
 import { useEffect, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import type { FeatureCollection, LineString } from 'geojson'
-import { addRoadLayer, updateRoadData, fitRoadBounds } from '../lib/mapHelpers'
+import type { SnapResult } from '../lib/segmentSnap'
+import {
+  addRoadLayer,
+  updateRoadData,
+  fitRoadBounds,
+  addRouteLayers,
+  updateRouteLayer,
+  updateMarkersLayer,
+  updateSnapIndicatorLayer,
+} from '../lib/mapHelpers'
 
 interface MapViewProps {
   apiKey: string
   geojson: FeatureCollection<LineString> | null
+  onMapClick?: (lngLat: [number, number]) => void
+  routePath?: [number, number][]
+  sourceSnap?: SnapResult | null
+  destSnap?: SnapResult | null
+  lastClickPoint?: [number, number] | null
 }
 
-export function MapView({ apiKey, geojson }: MapViewProps) {
+export function MapView({
+  apiKey,
+  geojson,
+  onMapClick,
+  routePath,
+  sourceSnap,
+  destSnap,
+  lastClickPoint,
+}: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const loadedRef = useRef(false)
 
-  // Create map once
+  // Create map once (re-mounts if apiKey changes)
   useEffect(() => {
     if (!containerRef.current) return
 
@@ -26,7 +48,12 @@ export function MapView({ apiKey, geojson }: MapViewProps) {
 
     map.on('load', () => {
       addRoadLayer(map)
+      addRouteLayers(map)
       loadedRef.current = true
+    })
+
+    map.on('click', (e) => {
+      onMapClick?.([e.lngLat.lng, e.lngLat.lat])
     })
 
     mapRef.current = map
@@ -45,6 +72,15 @@ export function MapView({ apiKey, geojson }: MapViewProps) {
     updateRoadData(mapRef.current, geojson)
     fitRoadBounds(mapRef.current, geojson)
   }, [geojson])
+
+  // React to routing prop changes
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !loadedRef.current) return
+    updateRouteLayer(map, routePath ?? [])
+    updateMarkersLayer(map, sourceSnap ?? null, destSnap ?? null)
+    updateSnapIndicatorLayer(map, lastClickPoint ?? null, sourceSnap?.snappedPoint ?? null)
+  }, [routePath, sourceSnap, destSnap, lastClickPoint])
 
   return (
     <div
