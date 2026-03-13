@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import type { FeatureCollection, LineString } from 'geojson'
 import type { SnapResult } from '../lib/segmentSnap'
+import type { OsmGraph } from '../lib/osmParser'
 import {
   addRoadLayer,
   updateRoadData,
   fitRoadBounds,
+  addFrontierLayers,
   addRouteLayers,
   updateRouteLayer,
   updateMarkersLayer,
@@ -21,6 +23,8 @@ interface MapViewProps {
   destSnap?: SnapResult | null
   lastClickPoint?: [number, number] | null
   lastSnapPoint?: [number, number] | null
+  graph?: OsmGraph | null
+  onMapReady?: (map: maplibregl.Map) => void
 }
 
 export function MapView({
@@ -32,6 +36,10 @@ export function MapView({
   destSnap,
   lastClickPoint,
   lastSnapPoint,
+  // graph and onMapReady are passed from App.tsx but not used inside MapView directly
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  graph: _graph,
+  onMapReady,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
@@ -40,6 +48,10 @@ export function MapView({
   const onMapClickRef = useRef(onMapClick)
   useEffect(() => {
     onMapClickRef.current = onMapClick
+  })
+  const onMapReadyRef = useRef(onMapReady)
+  useEffect(() => {
+    onMapReadyRef.current = onMapReady
   })
 
   // Create map once (re-mounts if apiKey changes)
@@ -55,8 +67,10 @@ export function MapView({
 
     map.on('load', () => {
       addRoadLayer(map)
+      addFrontierLayers(map)   // must be before addRouteLayers for z-order
       addRouteLayers(map)
       loadedRef.current = true
+      onMapReadyRef.current?.(map)
     })
 
     map.on('click', (e) => {
