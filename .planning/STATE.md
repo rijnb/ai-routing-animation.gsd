@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-search-animation 03-02-PLAN.md
-last_updated: "2026-03-13T13:10:18.006Z"
+stopped_at: Completed 03-search-animation 03-03-PLAN.md (awaiting human verification checkpoint)
+last_updated: "2026-03-13T13:13:50.902Z"
 last_activity: 2026-03-12 — Roadmap created
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 10
-  completed_plans: 9
+  completed_plans: 10
   percent: 0
 ---
 
@@ -60,6 +60,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-routing-engine P04 | 60 | 3 tasks | 4 files |
 | Phase 03-search-animation P01 | 4 | 2 tasks | 2 files |
 | Phase 03-search-animation P02 | 2 | 2 tasks | 2 files |
+| Phase 03-search-animation P03 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,8 @@ Recent decisions affecting current work:
 - [Phase 03-search-animation]: slicePath uses ceil for fractional slicing; computeNodesPerFrame floors at 1 via max(1,...)
 - [Phase 03-search-animation]: cancelAnimation does not call clearFrontierLayers — caller controls when to clear on route reset
 - [Phase 03-search-animation]: Route color changed #e63012 to #ffcc00 so red is reserved for frontier nodes
+- [Phase 03-search-animation]: onMapReady callback pattern: MapView exposes map instance to App.tsx via callback after load
+- [Phase 03-search-animation]: SpeedPanel inside map container div as absolute sibling for correct overlay
 
 ### Pending Todos
 
@@ -103,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T13:10:18.003Z
-Stopped at: Completed 03-search-animation 03-02-PLAN.md
+Last session: 2026-03-13T13:13:50.900Z
+Stopped at: Completed 03-search-animation 03-03-PLAN.md (awaiting human verification checkpoint)
 Resume file: None
