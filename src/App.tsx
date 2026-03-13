@@ -1,13 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { MapView } from './components/MapView'
 import { ApiKeyModal } from './components/ApiKeyModal'
 import { SettingsPanel } from './components/SettingsPanel'
 import { DropZone } from './components/DropZone'
 import { LoadingOverlay } from './components/LoadingOverlay'
 import { ModeSelector } from './components/ModeSelector'
+import { SpeedPanel } from './components/SpeedPanel'
 import { getApiKey, clearApiKey } from './lib/apiKeyStore'
 import { useOsmLoader } from './hooks/useOsmLoader'
 import { useRouter } from './hooks/useRouter'
+import { useAnimation } from './hooks/useAnimation'
+import { clearFrontierLayers } from './lib/mapHelpers'
+import type { RouteResult } from './lib/router'
+import maplibregl from 'maplibre-gl'
 
 export default function App() {
   const [apiKey, setApiKey] = useState<string | null>(getApiKey())
@@ -24,6 +29,9 @@ export default function App() {
     handleMapClick,
     resetRouting,
   } = useRouter(workerRef, graph, componentMap)
+
+  const { speed, setSpeed, startAnimation, cancelAnimation } = useAnimation()
+  const mapRef = useRef<maplibregl.Map | null>(null)
 
   const isLoading = stage !== '' && geojson === null
 
@@ -48,6 +56,23 @@ export default function App() {
     return () => clearTimeout(timer)
   }, [routeError])
 
+  // Auto-start animation when route changes
+  const prevRouteRef = useRef<RouteResult | null>(null)
+  useEffect(() => {
+    if (route && route !== prevRouteRef.current && graph && mapRef.current) {
+      prevRouteRef.current = route
+      startAnimation(mapRef.current, route, graph)
+    }
+  }, [route, graph, startAnimation])
+
+  // Cancel animation and clear layers when OSM is reset (stage returns to idle)
+  useEffect(() => {
+    if (stage === 'idle') {
+      cancelAnimation()
+      if (mapRef.current) clearFrontierLayers(mapRef.current)
+    }
+  }, [stage, cancelAnimation])
+
   // Track previous geojson to detect new file load
   const prevGeojsonRef = useRef<typeof geojson>(null)
   useEffect(() => {
@@ -58,6 +83,14 @@ export default function App() {
     }
     prevGeojsonRef.current = geojson
   }, [geojson, resetRouting])
+
+  // Cancel animation and clear frontier layers on new map click
+  const handleMapClickWithCancel = useCallback((lngLat: [number, number]) => {
+    cancelAnimation()
+    if (mapRef.current) clearFrontierLayers(mapRef.current)
+    setLastClickPoint(lngLat)
+    handleMapClick(lngLat)
+  }, [cancelAnimation, handleMapClick])
 
   // Show ApiKeyModal if no key stored
   if (!apiKey) {
@@ -70,16 +103,16 @@ export default function App() {
         <MapView
           apiKey={apiKey}
           geojson={geojson}
-          onMapClick={(lngLat) => {
-            setLastClickPoint(lngLat)
-            handleMapClick(lngLat)
-          }}
+          onMapClick={handleMapClickWithCancel}
           routePath={route?.path ?? []}
           sourceSnap={sourceSnap}
           destSnap={destSnap}
           lastClickPoint={lastClickPoint}
           lastSnapPoint={lastSnapPoint}
+          graph={graph}
+          onMapReady={m => { mapRef.current = m }}
         />
+        <SpeedPanel speed={speed} onSpeedChange={setSpeed} visible={route !== null} />
       </div>
 
       <LoadingOverlay stage={stage} percent={percent} visible={isLoading} />
