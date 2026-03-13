@@ -90,6 +90,7 @@ completed: 2026-03-13
 2. **Task 2: Upload UX + App wiring** - `a0f13ce` (feat)
 3. **Bug fix: gzip transparent decompression** - `8b6aa68` (fix)
 4. **Task 3: Human verification approved** - see plan metadata commit
+5. **Post-phase bug fix: DOMParser not available in Worker** - `7c876e7` (fix)
 
 ## Deviations from Plan
 
@@ -110,10 +111,18 @@ completed: 2026-03-13
 - **Verification:** Dev server response confirmed via curl — `Content-Type: application/gzip`, no `Content-Encoding`. `npm run build` passes. All 12 tests GREEN.
 - **Committed in:** `8b6aa68`
 
+**3. [Rule 1 - Bug] Replaced DOMParser with Worker-compatible XML parsing**
+- **Found during:** Post-phase verification (clicking "Load Leiden" in browser)
+- **Issue:** `DOMParser` is only available in the main browser thread. Calling `new DOMParser()` inside `osmWorker.ts` (a Web Worker) throws "DOMParser is not defined", crashing the entire load pipeline.
+- **Fix:** Rewrote `parseOsmXml` in `src/lib/osmParser.ts` to use regex-based attribute extraction via a local `extractAttr` helper. Parses `<node>`, `<way>`, `<tag>`, and `<nd>` elements with `RegExp.exec` loops. Public API unchanged — same signature, same return type.
+- **Files modified:** `src/lib/osmParser.ts`
+- **Verification:** All 12 tests GREEN, `npm run build` exits 0
+- **Commit:** `7c876e7`
+
 ---
 
-**Total deviations:** 2 auto-fixed (1 Rule 3 - blocking, 1 Rule 1 - bug)
-**Impact on plan:** Both fixes essential for correctness. No scope creep.
+**Total deviations:** 3 auto-fixed (1 Rule 3 - blocking, 2 Rule 1 - bugs)
+**Impact on plan:** All fixes essential for correctness. No scope creep.
 
 ## Self-Check: PASSED
 
@@ -128,9 +137,11 @@ completed: 2026-03-13
 - src/index.css: FOUND (modified)
 - src/main.tsx: FOUND (modified)
 - vite.config.ts: FOUND (modified — rawGzipStaticPlugin)
+- src/lib/osmParser.ts: FOUND (modified — regex-based, no DOMParser)
 - Task 1 commit b1f0173: FOUND
 - Task 2 commit a0f13ce: FOUND
 - Bug fix commit 8b6aa68: FOUND
+- Post-phase bug fix commit 7c876e7: FOUND
 - All 12 tests: GREEN
 - npm run build: exits 0
 
