@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-search-animation 03-03-PLAN.md (awaiting human verification checkpoint)
-last_updated: "2026-03-13T13:13:50.902Z"
+stopped_at: Completed 03-search-animation 03-03-PLAN.md (human verification approved)
+last_updated: "2026-03-13T13:24:51.076Z"
 last_activity: 2026-03-12 — Roadmap created
 progress:
   total_phases: 4
@@ -61,6 +61,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-search-animation P01 | 4 | 2 tasks | 2 files |
 | Phase 03-search-animation P02 | 2 | 2 tasks | 2 files |
 | Phase 03-search-animation P03 | 2 | 2 tasks | 3 files |
+| Phase 03-search-animation P03 | 25 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,8 @@ Recent decisions affecting current work:
 - [Phase 03-search-animation]: Route color changed #e63012 to #ffcc00 so red is reserved for frontier nodes
 - [Phase 03-search-animation]: onMapReady callback pattern: MapView exposes map instance to App.tsx via callback after load
 - [Phase 03-search-animation]: SpeedPanel inside map container div as absolute sibling for correct overlay
+- [Phase 03-search-animation]: Route line shows full path in red throughout animation — slicePath removed; grow-from-zero caused invisible route at animation start
+- [Phase 03-search-animation]: SpeedPanel z-index 400 (above DropZone 300) — slider accessible when route active
 
 ### Pending Todos
 
@@ -106,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T13:13:50.900Z
-Stopped at: Completed 03-search-animation 03-03-PLAN.md (awaiting human verification checkpoint)
+Last session: 2026-03-13T13:24:51.073Z
+Stopped at: Completed 03-search-animation 03-03-PLAN.md (human verification approved)
 Resume file: None
