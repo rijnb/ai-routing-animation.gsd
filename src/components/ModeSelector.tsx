@@ -2,10 +2,7 @@
  * ModeSelector.tsx — floating mode selector panel for routing mode selection.
  *
  * Renders three toggle buttons (car, bicycle, pedestrian). The active mode
- * button has aria-pressed="true".
- *
- * Current state: RED stub — renders buttons but click handlers do not call
- * onModeChange yet. Implementation in Plan 02-04.
+ * button has aria-pressed="true". Hidden when `visible` is false.
  */
 
 import React from 'react'
@@ -14,27 +11,72 @@ import type { RoutingMode } from '../lib/router'
 interface ModeSelectorProps {
   mode: RoutingMode
   onModeChange: (mode: RoutingMode) => void
+  visible?: boolean
 }
 
-const MODES: { value: RoutingMode; label: string }[] = [
-  { value: 'car', label: 'Car' },
-  { value: 'bicycle', label: 'Bicycle' },
-  { value: 'pedestrian', label: 'Pedestrian' },
+const MODES: { value: RoutingMode; label: string; icon: string }[] = [
+  { value: 'car', label: 'Car', icon: '\u{1F697}' },
+  { value: 'bicycle', label: 'Bicycle', icon: '\u{1F6B2}' },
+  { value: 'pedestrian', label: 'Pedestrian', icon: '\u{1F6B6}' },
 ]
 
-export function ModeSelector({ mode, onModeChange }: ModeSelectorProps): JSX.Element {
-  void onModeChange
+const styles = {
+  container: {
+    position: 'absolute' as const,
+    bottom: '24px',
+    right: '24px',
+    zIndex: 10,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+  },
+  buttonBase: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '10px 16px',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: 500,
+    color: '#ffffff',
+    transition: 'background-color 0.15s ease',
+  },
+  buttonActive: {
+    backgroundColor: '#2255cc',
+  },
+  buttonInactive: {
+    backgroundColor: '#1a1a2e',
+  },
+}
+
+export function ModeSelector({
+  mode,
+  onModeChange,
+  visible = true,
+}: ModeSelectorProps): JSX.Element | null {
+  if (!visible) return null
+
   return (
-    <div className="mode-selector">
-      {MODES.map(({ value, label }) => (
-        <button
-          key={value}
-          aria-pressed={mode === value}
-          // Stub: click handler not yet wired (RED — will call onModeChange in Plan 02-04)
-        >
-          {label}
-        </button>
-      ))}
+    <div className="mode-selector" style={styles.container}>
+      {MODES.map(({ value, label, icon }) => {
+        const isActive = mode === value
+        return (
+          <button
+            key={value}
+            aria-pressed={isActive}
+            onClick={() => onModeChange(value)}
+            style={{
+              ...styles.buttonBase,
+              ...(isActive ? styles.buttonActive : styles.buttonInactive),
+            }}
+          >
+            <span aria-hidden="true">{icon}</span>
+            {label}
+          </button>
+        )
+      })}
     </div>
   )
 }
