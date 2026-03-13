@@ -5,7 +5,6 @@
  * button has aria-pressed="true". Hidden when `visible` is false.
  */
 
-import React from 'react'
 import type { RoutingMode } from '../lib/router'
 
 interface ModeSelectorProps {
@@ -55,7 +54,7 @@ export function ModeSelector({
   mode,
   onModeChange,
   visible = true,
-}: ModeSelectorProps): JSX.Element | null {
+}: ModeSelectorProps) {
   if (!visible) return null
 
   return (
