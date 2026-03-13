@@ -95,7 +95,7 @@ export function addRouteLayers(map: maplibregl.Map): void {
     },
   })
 
-  // route: bold red line for the A* path (on top of all other layers)
+  // route: bold yellow line for the A* path (on top of all other layers)
   map.addSource('route', { type: 'geojson', data: EMPTY_FC })
   map.addLayer({
     id: 'route-layer',
@@ -103,7 +103,7 @@ export function addRouteLayers(map: maplibregl.Map): void {
     source: 'route',
     layout: { 'line-join': 'round', 'line-cap': 'round' },
     paint: {
-      'line-color': '#e63012',
+      'line-color': '#ffcc00',
       'line-width': 5,
       'line-opacity': 0.9,
     },
@@ -207,4 +207,75 @@ export function clearRouteLayers(map: maplibregl.Map): void {
     const source = map.getSource(sourceId) as GeoJSONSource | undefined
     source?.setData(EMPTY_FC)
   }
+}
+
+/**
+ * addFrontierLayers — adds visited-nodes and frontier-nodes GeoJSON sources and circle layers.
+ * Visited layer is added first so it renders beneath the frontier layer.
+ * Call this separately from addRouteLayers — the caller controls layer order.
+ */
+export function addFrontierLayers(map: maplibregl.Map): void {
+  // visited nodes: cyan circles, smaller, semi-transparent
+  map.addSource('visited-nodes', { type: 'geojson', data: EMPTY_FC })
+  map.addLayer({
+    id: 'visited-nodes-layer',
+    type: 'circle',
+    source: 'visited-nodes',
+    paint: {
+      'circle-radius': 3,
+      'circle-color': '#00bcd4',
+      'circle-opacity': 0.7,
+    },
+  })
+
+  // frontier nodes: red circles, larger, fully opaque — rendered on top of visited
+  map.addSource('frontier-nodes', { type: 'geojson', data: EMPTY_FC })
+  map.addLayer({
+    id: 'frontier-nodes-layer',
+    type: 'circle',
+    source: 'frontier-nodes',
+    paint: {
+      'circle-radius': 6,
+      'circle-color': '#ff2244',
+      'circle-opacity': 1.0,
+    },
+  })
+}
+
+/**
+ * updateFrontierLayers — sets visited and frontier node sources to the given coordinate arrays.
+ */
+export function updateFrontierLayers(
+  map: maplibregl.Map,
+  visited: [number, number][],
+  frontier: [number, number][],
+): void {
+  const visitedFC: FeatureCollection<Point> = {
+    type: 'FeatureCollection',
+    features: visited.map(coord => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: coord },
+      properties: {},
+    })),
+  }
+
+  const frontierFC: FeatureCollection<Point> = {
+    type: 'FeatureCollection',
+    features: frontier.map(coord => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: coord },
+      properties: {},
+    })),
+  }
+
+  ;(map.getSource('visited-nodes') as GeoJSONSource | undefined)?.setData(visitedFC)
+  ;(map.getSource('frontier-nodes') as GeoJSONSource | undefined)?.setData(frontierFC)
+}
+
+/**
+ * clearFrontierLayers — resets both frontier sources to empty FeatureCollections.
+ */
+export function clearFrontierLayers(map: maplibregl.Map): void {
+  ;(map.getSource('visited-nodes') as GeoJSONSource | undefined)?.setData(EMPTY_FC)
+  ;(map.getSource('frontier-nodes') as GeoJSONSource | undefined)?.setData(EMPTY_FC)
 }
