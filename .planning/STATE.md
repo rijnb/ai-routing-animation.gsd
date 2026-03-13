@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-routing-engine/02-01-PLAN.md
-last_updated: "2026-03-13T11:21:28.511Z"
+stopped_at: Completed 02-routing-engine/02-02-PLAN.md
+last_updated: "2026-03-13T11:25:14.985Z"
 last_activity: 2026-03-12 — Roadmap created
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 7
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -55,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-data-pipeline-and-map-foundation P03 | 130 | 2 tasks | 10 files |
 | Phase 01-data-pipeline-and-map-foundation P03 | 526204min | 3 tasks | 11 files |
 | Phase 02-routing-engine P01 | 4 | 2 tasks | 7 files |
+| Phase 02-routing-engine P02 | 5 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Recent decisions affecting current work:
 - [Phase 01-data-pipeline-and-map-foundation]: rawGzipStaticPlugin in vite.config.ts: serve public/*.gz as raw binary (no Content-Encoding) so browser does not transparently decompress before worker gunzipSync
 - [Phase 01-data-pipeline-and-map-foundation]: osmParser uses regex-based XML parsing (no DOMParser) — DOMParser is main-thread only; regex approach works in Web Workers, Node, and browser
 - [Phase 02-routing-engine]: React import required in .tsx test files: tsconfig.app.json excludes __tests__, so vitest does not get the react-jsx transform; explicit import React from 'react' resolves ReferenceError
+- [Phase 02-routing-engine]: buildAdjacency accepts (ways, nodes) as two separate args — test file is authoritative over plan spec
+- [Phase 02-routing-engine]: haversineMeters in router.ts as single source; graphBuilder and segmentSnap import from there
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T11:21:28.509Z
-Stopped at: Completed 02-routing-engine/02-01-PLAN.md
+Last session: 2026-03-13T11:25:14.983Z
+Stopped at: Completed 02-routing-engine/02-02-PLAN.md
 Resume file: None
