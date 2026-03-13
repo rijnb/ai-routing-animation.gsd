@@ -95,7 +95,7 @@ export function addRouteLayers(map: maplibregl.Map): void {
     },
   })
 
-  // route: bold yellow line for the A* path (on top of all other layers)
+  // route: bold red line for the A* path (on top of all other layers)
   map.addSource('route', { type: 'geojson', data: EMPTY_FC })
   map.addLayer({
     id: 'route-layer',
@@ -103,7 +103,7 @@ export function addRouteLayers(map: maplibregl.Map): void {
     source: 'route',
     layout: { 'line-join': 'round', 'line-cap': 'round' },
     paint: {
-      'line-color': '#ffcc00',
+      'line-color': '#e63012',
       'line-width': 5,
       'line-opacity': 0.9,
     },

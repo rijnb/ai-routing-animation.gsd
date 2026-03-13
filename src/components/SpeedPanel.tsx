@@ -12,7 +12,7 @@ export function SpeedPanel({ speed, onSpeedChange, visible }: SpeedPanelProps) {
       bottom: '24px',
       left: '50%',
       transform: 'translateX(-50%)',
-      zIndex: 10,
+      zIndex: 400,
       display: 'flex',
       alignItems: 'center',
       gap: '10px',

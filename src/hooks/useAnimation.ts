@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import maplibregl from 'maplibre-gl'
-import { filterHistory, slicePath, computeNodesPerFrame } from '../lib/animationUtils'
+import { filterHistory, computeNodesPerFrame } from '../lib/animationUtils'
 import { updateFrontierLayers, updateRouteLayer } from '../lib/mapHelpers'
 import type { RouteResult } from '../lib/router'
 import type { OsmGraph } from '../lib/osmParser'
@@ -54,14 +54,12 @@ export function useAnimation(): {
 
         updateFrontierLayers(map, visited, frontierCoords)
 
-        const pathSlice = slicePath(route.path, cursor, total)
-        updateRouteLayer(map, pathSlice)
+        // Always show the full route path in red throughout the animation
+        updateRouteLayer(map, route.path)
 
         if (cursor < total) {
           rafHandleRef.current = requestAnimationFrame(frame)
         } else {
-          // Ensure full path is shown when animation completes
-          updateRouteLayer(map, route.path)
           rafHandleRef.current = null
         }
       }
