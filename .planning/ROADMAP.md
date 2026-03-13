@@ -45,12 +45,13 @@ Plans:
   3. User can select car, bicycle, or pedestrian mode and the three modes produce visibly different routes on the same source/destination pair
   4. If source and destination are in disconnected graph components, the user sees a clear warning (not a silent failure)
   5. Route computation completes with full A* search history recorded, starting and ending at interpolated segment points (not just graph nodes)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Wave 0 TDD stubs: router.ts, segmentSnap.ts, ModeSelector.tsx type contracts + RED test files
+- [ ] 02-02-PLAN.md — Core algorithms GREEN: graphBuilder adjacency+union-find, A* with history, segment snapping
+- [ ] 02-03-PLAN.md — Worker + hook layer: osmWorker route handler, useRouter hook, ModeSelector complete
+- [ ] 02-04-PLAN.md — Map integration + App wiring: route/marker/snap layers, full App.tsx wiring, human verify
 
 ### Phase 3: Search Animation
 **Goal**: Users watch the A* search frontier expand across the map while the optimal path grows in red — the core visual experience
@@ -90,6 +91,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Pipeline and Map Foundation | 3/3 | Complete   | 2026-03-13 |
-| 2. Routing Engine | 0/3 | Not started | - |
+| 2. Routing Engine | 0/4 | Not started | - |
 | 3. Search Animation | 0/2 | Not started | - |
 | 4. Stats and Marker Interaction | 0/2 | Not started | - |
