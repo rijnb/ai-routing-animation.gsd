@@ -46,7 +46,7 @@ function handleLoad(buffer: ArrayBuffer): void {
     const geojson = buildRoadGeoJson(graph.ways, graph.nodes)
 
     self.postMessage({ type: 'progress', stage: 'Building routing graph\u2026', pct: 85 })
-    const { adjacency: adj, componentMap } = buildAdjacency(graph.ways, graph.nodes)
+    const { adjacency: adj, componentMap } = buildAdjacency(graph.ways, graph.nodes, graph.barrierNodes)
 
     // Store worker-side state for routing
     osmGraph = graph

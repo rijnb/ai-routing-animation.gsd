@@ -116,6 +116,69 @@ describe('buildAdjacency', () => {
     })
   })
 
+  describe('buildAdjacency — barrier node propagation', () => {
+    // Graph: A — B(pole) — C
+    // Node B has barrier=pole in barrierNodes.
+    // Expected: edges leading INTO B carry barrier=pole.
+    //   A→B edge has barrier=pole (entering B)
+    //   C→B edge has barrier=pole (entering B)
+    // Edges leading OUT OF B do not carry a barrier from B:
+    //   B→A and B→C carry no extra barrier (no barrier at A or C)
+    const barrierNodes = new Map<string, [number, number]>([
+      ['A', [4.9000, 52.3700]],
+      ['B', [4.9005, 52.3700]], // barrier=pole node
+      ['C', [4.9010, 52.3700]],
+    ])
+
+    const barrierWays = [
+      { id: 'w1', nodeRefs: ['A', 'B'], tags: { highway: 'residential' } },
+      { id: 'w2', nodeRefs: ['B', 'C'], tags: { highway: 'residential' } },
+    ]
+
+    const poleBarrierMap = new Map<string, string>([['B', 'pole']])
+
+    it('edge A→B carries barrier=pole from node B', () => {
+      const { adjacency } = buildAdjacency(barrierWays, barrierNodes, poleBarrierMap)
+      const edgeAB = adjacency['A'].find((e) => e.to === 'B')
+      expect(edgeAB).toBeDefined()
+      expect(edgeAB!.tags['barrier']).toBe('pole')
+    })
+
+    it('edge C→B carries barrier=pole from node B', () => {
+      const { adjacency } = buildAdjacency(barrierWays, barrierNodes, poleBarrierMap)
+      const edgeCB = adjacency['C'].find((e) => e.to === 'B')
+      expect(edgeCB).toBeDefined()
+      expect(edgeCB!.tags['barrier']).toBe('pole')
+    })
+
+    it('edge B→A does not carry barrier (no barrier at A)', () => {
+      const { adjacency } = buildAdjacency(barrierWays, barrierNodes, poleBarrierMap)
+      const edgeBA = adjacency['B'].find((e) => e.to === 'A')
+      expect(edgeBA).toBeDefined()
+      expect(edgeBA!.tags['barrier']).toBeUndefined()
+    })
+
+    it('edge B→C does not carry barrier (no barrier at C)', () => {
+      const { adjacency } = buildAdjacency(barrierWays, barrierNodes, poleBarrierMap)
+      const edgeBC = adjacency['B'].find((e) => e.to === 'C')
+      expect(edgeBC).toBeDefined()
+      expect(edgeBC!.tags['barrier']).toBeUndefined()
+    })
+
+    it('without barrierNodes argument, edges have no barrier tag', () => {
+      const { adjacency } = buildAdjacency(barrierWays, barrierNodes)
+      const edgeAB = adjacency['A'].find((e) => e.to === 'B')
+      expect(edgeAB).toBeDefined()
+      expect(edgeAB!.tags['barrier']).toBeUndefined()
+    })
+
+    it('barrier node does not block component connectivity', () => {
+      const { sameComponent } = buildAdjacency(barrierWays, barrierNodes, poleBarrierMap)
+      // The barrier is enforced at routing time (canUseEdge), not at graph build time
+      expect(sameComponent('A', 'C')).toBe(true)
+    })
+  })
+
   describe('buildAdjacency — oneway detection', () => {
     const onewayNodes = new Map<string, [number, number]>([
       ['A', [4.9000, 52.3700]],

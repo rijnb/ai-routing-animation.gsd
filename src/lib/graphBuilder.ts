@@ -79,6 +79,11 @@ class UnionFind {
  * and runs union-find component detection.
  *
  * Accepts (ways, nodes) as two separate arguments to match the test contract.
+ * Optional barrierNodes maps nodeId → barrier value for nodes that carry a barrier
+ * tag in OSM (barriers are almost always on nodes, not on ways).
+ *
+ * For each edge A→B, if node B has a barrier tag, that barrier is merged into the
+ * edge's tags so canUseEdge() can enforce it. Similarly for edge B→A with node A.
  *
  * Returns:
  *   adjacency   — bidirectional edge list with haversine-distance weights
@@ -88,6 +93,7 @@ class UnionFind {
 export function buildAdjacency(
   ways: OsmWay[],
   nodes: Map<string, [number, number]>,
+  barrierNodes?: Map<string, string>,
 ): {
   adjacency: AdjacencyList
   componentMap: ComponentMap
@@ -112,16 +118,29 @@ export function buildAdjacency(
       const isOneway = way.tags['oneway'] === 'yes'
       const isOnewayMinus1 = way.tags['oneway'] === '-1'
 
+      // Merge node-level barrier tags into edge tags.
+      // A barrier node blocks traversal across it: the edge leading INTO the barrier
+      // node carries the barrier (A→B has barrier from B; B→A has barrier from A).
+      const barrierAtB = barrierNodes?.get(idB)
+      const barrierAtA = barrierNodes?.get(idA)
+
+      const tagsAB: Record<string, string> = barrierAtB
+        ? { ...way.tags, barrier: barrierAtB }
+        : way.tags
+      const tagsBA: Record<string, string> = barrierAtA
+        ? { ...way.tags, barrier: barrierAtA }
+        : way.tags
+
       const edgeAB: AdjacencyEdge = {
         to: idB,
         weight,
-        tags: way.tags,
+        tags: tagsAB,
         onewayReversed: isOnewayMinus1 ? true : undefined,
       }
       const edgeBA: AdjacencyEdge = {
         to: idA,
         weight,
-        tags: way.tags,
+        tags: tagsBA,
         onewayReversed: isOneway ? true : undefined,
       }
 

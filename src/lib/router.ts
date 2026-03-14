@@ -63,6 +63,7 @@ const HIGHWAY_ACCESS: Record<string, Set<RoutingMode>> = {
   path: new Set(['bicycle', 'pedestrian']),
   steps: new Set(['pedestrian']),
   track: new Set(['bicycle', 'pedestrian']),
+  bridleway: new Set(['pedestrian']),
 }
 
 /**
@@ -85,10 +86,17 @@ export function canUseEdge(
   if (allowed !== undefined && !allowed.has(mode)) return false
 
   // 3. access=no and mode-specific tag overrides
-  if (tags['access'] === 'no') return false
+  const access = tags['access']
+  if (access === 'no') return false
+  // Private/restricted access: block motorised vehicle routing.
+  // access=private, access=destination, access=permit, access=customers all
+  // indicate roads that should not be used as general through-routes by cars.
+  if (mode === 'car' && (access === 'private' || access === 'destination' || access === 'permit' || access === 'customers')) return false
+  if (tags['vehicle'] === 'no' && mode !== 'pedestrian') return false
   if (tags['foot'] === 'no' && mode === 'pedestrian') return false
   if (tags['bicycle'] === 'no' && mode === 'bicycle') return false
   if (tags['motor_vehicle'] === 'no' && mode === 'car') return false
+  if (tags['motorcar'] === 'no' && mode === 'car') return false
 
   // 4. Barrier check
   const barrier = tags['barrier']

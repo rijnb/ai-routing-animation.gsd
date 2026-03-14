@@ -53,6 +53,20 @@ describe('canUseEdge', () => {
     })
   })
 
+  describe('bridleway', () => {
+    it('is NOT accessible for car', () => {
+      expect(canUseEdge(edge({ highway: 'bridleway' }), 'car')).toBe(false)
+    })
+
+    it('is NOT accessible for bicycle', () => {
+      expect(canUseEdge(edge({ highway: 'bridleway' }), 'bicycle')).toBe(false)
+    })
+
+    it('is accessible for pedestrian', () => {
+      expect(canUseEdge(edge({ highway: 'bridleway' }), 'pedestrian')).toBe(true)
+    })
+  })
+
   describe('access=no override', () => {
     it('blocks car even on primary road', () => {
       expect(canUseEdge(edge({ highway: 'primary', access: 'no' }), 'car')).toBe(false)
@@ -64,6 +78,82 @@ describe('canUseEdge', () => {
 
     it('blocks pedestrian even on footway', () => {
       expect(canUseEdge(edge({ highway: 'footway', access: 'no' }), 'pedestrian')).toBe(false)
+    })
+  })
+
+  describe('access=private blocks car routing', () => {
+    it('blocks car on access=private road', () => {
+      expect(canUseEdge(edge({ highway: 'service', access: 'private' }), 'car')).toBe(false)
+    })
+
+    it('allows bicycle on access=private road', () => {
+      expect(canUseEdge(edge({ highway: 'service', access: 'private' }), 'bicycle')).toBe(true)
+    })
+
+    it('allows pedestrian on access=private road', () => {
+      expect(canUseEdge(edge({ highway: 'service', access: 'private' }), 'pedestrian')).toBe(true)
+    })
+  })
+
+  describe('access=destination blocks car routing', () => {
+    it('blocks car on access=destination road', () => {
+      expect(canUseEdge(edge({ highway: 'residential', access: 'destination' }), 'car')).toBe(false)
+    })
+
+    it('allows bicycle on access=destination road', () => {
+      expect(canUseEdge(edge({ highway: 'residential', access: 'destination' }), 'bicycle')).toBe(true)
+    })
+
+    it('allows pedestrian on access=destination road', () => {
+      expect(canUseEdge(edge({ highway: 'residential', access: 'destination' }), 'pedestrian')).toBe(true)
+    })
+  })
+
+  describe('access=permit blocks car routing', () => {
+    it('blocks car on access=permit road', () => {
+      expect(canUseEdge(edge({ highway: 'service', access: 'permit' }), 'car')).toBe(false)
+    })
+
+    it('allows pedestrian on access=permit road', () => {
+      expect(canUseEdge(edge({ highway: 'service', access: 'permit' }), 'pedestrian')).toBe(true)
+    })
+  })
+
+  describe('access=customers blocks car routing', () => {
+    it('blocks car on access=customers road', () => {
+      expect(canUseEdge(edge({ highway: 'service', access: 'customers' }), 'car')).toBe(false)
+    })
+
+    it('allows pedestrian on access=customers road', () => {
+      expect(canUseEdge(edge({ highway: 'service', access: 'customers' }), 'pedestrian')).toBe(true)
+    })
+  })
+
+  describe('vehicle=no override', () => {
+    it('blocks car', () => {
+      expect(canUseEdge(edge({ highway: 'residential', vehicle: 'no' }), 'car')).toBe(false)
+    })
+
+    it('blocks bicycle', () => {
+      expect(canUseEdge(edge({ highway: 'residential', vehicle: 'no' }), 'bicycle')).toBe(false)
+    })
+
+    it('allows pedestrian', () => {
+      expect(canUseEdge(edge({ highway: 'residential', vehicle: 'no' }), 'pedestrian')).toBe(true)
+    })
+  })
+
+  describe('motorcar=no override', () => {
+    it('blocks car', () => {
+      expect(canUseEdge(edge({ highway: 'residential', motorcar: 'no' }), 'car')).toBe(false)
+    })
+
+    it('allows bicycle', () => {
+      expect(canUseEdge(edge({ highway: 'residential', motorcar: 'no' }), 'bicycle')).toBe(true)
+    })
+
+    it('allows pedestrian', () => {
+      expect(canUseEdge(edge({ highway: 'residential', motorcar: 'no' }), 'pedestrian')).toBe(true)
     })
   })
 
