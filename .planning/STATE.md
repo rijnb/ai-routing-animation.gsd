@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-14T11:42:20.407Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-14T11:46:03.468Z"
 last_activity: "2026-03-14 - Completed quick task 1: Write a README.md at the top-level directory of the project"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
   percent: 0
 ---
 
@@ -68,6 +68,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 04-stats-and-marker-interaction P03 | 30 | 3 tasks | 3 files |
 | Phase quick P1 | 525566 | 1 tasks | 1 files |
 | Phase 05-improve-routing-oneway-access P01 | 1 | 1 tasks | 3 files |
+| Phase 05-improve-routing-oneway-access P02 | 2 | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -114,6 +115,8 @@ Recent decisions affecting current work:
 - [Phase 04-stats-and-marker-interaction]: dragend registered once at marker creation; setLngLat on subsequent snap updates does not re-register to avoid duplicate listeners
 - [Phase quick-1]: No .env.example existed — README instructs users to create .env manually with VITE_MAPTILER_API_KEY
 - [Phase 05-improve-routing-oneway-access]: onewayReversed: true marks blocked edge (B→A for oneway=yes, A→B for oneway=-1); graph stays bidirectional — enforcement deferred to canUseEdge in Plan 02
+- [Phase 05-improve-routing-oneway-access]: canUseEdge accepts AdjacencyEdge (not tags) — full edge object enables onewayReversed check without extra parameter
+- [Phase 05-improve-routing-oneway-access]: segmentSnap.ts passes inline minimal AdjacencyEdge to canUseEdge — onewayReversed not applicable at way-level snap filtering
 
 ### Roadmap Evolution
 
@@ -135,6 +138,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T11:42:20.405Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-14T11:46:03.466Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
