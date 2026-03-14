@@ -75,8 +75,8 @@ export function snapToNearestSegment(
   let best: SnapResult | null = null
 
   for (const way of graph.ways) {
-    // Filter by routing mode
-    if (!canUseEdge(way.tags, mode)) continue
+    // Filter by routing mode (onewayReversed not applicable at way level — snap checks access only)
+    if (!canUseEdge({ to: '', weight: 0, tags: way.tags }, mode)) continue
 
     for (let i = 0; i < way.nodeRefs.length - 1; i++) {
       const idA = way.nodeRefs[i]

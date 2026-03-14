@@ -66,26 +66,48 @@ const HIGHWAY_ACCESS: Record<string, Set<RoutingMode>> = {
 }
 
 /**
- * canUseEdge — determines if a road edge with the given OSM tags is accessible
- * for the specified routing mode.
+ * canUseEdge — determines if a road edge is accessible for the specified
+ * routing mode. Checks construction blocking, highway access matrix, tag
+ * overrides, barrier blocking, and oneway direction enforcement.
  */
 export function canUseEdge(
-  tags: Record<string, string>,
+  edge: AdjacencyEdge,
   mode: RoutingMode,
 ): boolean {
+  const { tags, onewayReversed } = edge
   const highway = tags['highway'] ?? ''
+
+  // 1. Construction — block all modes
+  if (highway === 'construction' || tags['construction'] === 'yes') return false
+
+  // 2. Highway type access matrix
   const allowed = HIGHWAY_ACCESS[highway]
+  if (allowed !== undefined && !allowed.has(mode)) return false
 
-  // Unknown highway types: default allow all modes
-  if (allowed === undefined) return true
-
-  if (!allowed.has(mode)) return false
-
-  // Tag overrides
+  // 3. access=no and mode-specific tag overrides
   if (tags['access'] === 'no') return false
   if (tags['foot'] === 'no' && mode === 'pedestrian') return false
   if (tags['bicycle'] === 'no' && mode === 'bicycle') return false
   if (tags['motor_vehicle'] === 'no' && mode === 'car') return false
+
+  // 4. Barrier check
+  const barrier = tags['barrier']
+  if (barrier) {
+    const blocksAll = barrier === 'wall' || barrier === 'fence' || barrier === 'hedge'
+    const blocksCar = barrier === 'bollard' || barrier === 'gate' || barrier === 'lift_gate'
+                   || barrier === 'cycle_barrier'
+    const blocksCarAndBike = barrier === 'kissing_gate'
+    if (blocksAll) return false
+    if (blocksCarAndBike && (mode === 'car' || mode === 'bicycle')) return false
+    if (blocksCar && mode === 'car') return false
+  }
+
+  // 5. Oneway direction check
+  if (onewayReversed) {
+    if (mode === 'car') return false
+    if (mode === 'bicycle' && tags['oneway:bicycle'] !== 'no') return false
+    // pedestrian: always allowed regardless of onewayReversed
+  }
 
   return true
 }
@@ -158,7 +180,7 @@ export function aStar(
     const currentG = gScore.get(current) ?? Infinity
 
     for (const edge of neighbors) {
-      if (!canUseEdge(edge.tags, mode)) continue
+      if (!canUseEdge(edge, mode)) continue
 
       const tentativeG = currentG + edge.weight
       const neighborG = gScore.get(edge.to) ?? Infinity
