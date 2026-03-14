@@ -78,11 +78,12 @@ Plans:
   2. After the route is found, path distance in km is displayed
   3. Estimated travel time is displayed, derived from the selected routing mode's speed assumptions
   4. User can drag the source or destination marker to a new position, and a full route recalculation and animation restart occurs automatically
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Wave 0 TDD stubs: RED test files for stats pure functions and marker drag callback pipeline
+- [ ] 04-02-PLAN.md — Stats implementation: routeStats.ts utilities, nodesExplored in useAnimation, StatsPanel component
+- [ ] 04-03-PLAN.md — Integration + human verify: draggable MapLibre markers in MapView, handleMarkerDrag in useRouter, StatsPanel wired in App.tsx
 
 ## Progress
 
@@ -94,4 +95,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Data Pipeline and Map Foundation | 3/3 | Complete   | 2026-03-13 |
 | 2. Routing Engine | 3/4 | In Progress|  |
 | 3. Search Animation | 3/3 | Complete   | 2026-03-13 |
-| 4. Stats and Marker Interaction | 0/2 | Not started | - |
+| 4. Stats and Marker Interaction | 0/3 | Not started | - |
