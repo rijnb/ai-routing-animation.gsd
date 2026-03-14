@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A TypeScript browser application for visualizing graph-based pathfinding on real map data. Users upload a gzipped OSM file, click two points on the rendered map, select a routing mode (car, bicycle, or pedestrian), and watch A* search the road network — the search frontier expands node-by-node while the optimal path (pre-calculated) grows highlighted in red simultaneously.
+A TypeScript browser application for visualizing graph-based pathfinding on real map data. Users upload a gzipped OSM file, click two points on the rendered map, select a routing mode (car, bicycle, or pedestrian), and watch A* search the road network — the search frontier expands node-by-node while the optimal path (pre-calculated) is always shown in red. One-way streets, access restrictions, barriers, and construction zones are fully respected per transport mode.
 
 ## Core Value
 
@@ -12,17 +12,17 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ User can upload a gzipped OSM file (.osm.gz) and see the road network rendered on screen — v1.0
+- ✓ User can click two points on the map to set source and destination — v1.0
+- ✓ User can select routing mode: car, bicycle, or pedestrian — v1.0
+- ✓ User sees the A* search frontier animate node-by-node across the graph — v1.0
+- ✓ The optimal path (pre-calculated) is always shown in red as the search grows toward it — v1.0 (full path shown from frame 0, intentional for visibility)
+- ✓ Different routing modes produce visibly different routes (road type and access constraints) — v1.0
+- ✓ Animation speed is controllable (pause, step, fast-forward) — v1.0
 
 ### Active
 
-- [ ] User can upload a gzipped OSM file (.osm.gz) and see the road network rendered on screen
-- [ ] User can click two points on the map to set source and destination
-- [ ] User can select routing mode: car, bicycle, or pedestrian
-- [ ] User sees the A* search frontier animate node-by-node across the graph
-- [ ] The optimal path (pre-calculated) is always shown in red as the search grows toward it
-- [ ] Different routing modes produce visibly different routes (road type and access constraints)
-- [ ] Animation speed is controllable (pause, step, fast-forward)
+(None — define for next milestone)
 
 ### Out of Scope
 
@@ -34,11 +34,11 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 
 ## Context
 
-- This is a portfolio/demo project — visual impressiveness and algorithmic correctness matter more than production robustness
-- OSM data: nodes (lat/lon), ways (sequences of node references with tags), relations — the graph is built from ways tagged as roads/paths
-- Routing modes differ by which OSM way tags are traversable and what speed weights apply (e.g., `highway=motorway` for cars only, `bicycle=yes/no`, `foot=yes/no`)
-- A* pre-calculates the full path, then replays the search frontier animation synchronized with the growing red path
-- Map rendering must handle potentially large OSM datasets (small city extracts can have hundreds of thousands of nodes)
+- Shipped v1.0 with ~3,900 lines TypeScript/TSX. Tech stack: Vite 8, React 19, TypeScript, MapLibre GL JS, Vitest, fflate (in-browser gzip).
+- OSM parsing runs in a Web Worker to keep UI responsive on large files.
+- A* pre-calculates the full path, then replays the search frontier animation synchronized with the growing red path line.
+- 152 tests passing covering routing logic, animation utilities, and stats calculations.
+- Known tech debt: several visual/interactive behaviors (snap indicator, overlay fade-in, animation experience) require browser confirmation only; dead import (`updateMarkersLayer`) and orphaned export (`formatDistance`) remain in codebase.
 
 ## Constraints
 
@@ -51,10 +51,14 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Pre-calculate path before animating | "The optimal path should always be highlighted in red as it grows" — requires knowing the path upfront | — Pending |
-| Gzipped OSM input only | User specified .osm.gz — need in-browser decompression (DecompressionStream API) | — Pending |
-| Client-side only | Portfolio demo context — no backend needed, simpler deployment | — Pending |
-| MapLibre GL JS for rendering | User specified — tile-based renderer, OSM routing graph and animation overlaid as custom layers | — Pending |
+| Pre-calculate path before animating | "The optimal path should always be highlighted in red as it grows" — requires knowing the path upfront | ✓ Good — full red path shown from frame 0 (intentional deviation from proportional growth) |
+| Gzipped OSM input only | User specified .osm.gz — need in-browser decompression (DecompressionStream API) | ✓ Good — fflate used instead, works reliably |
+| Client-side only | Portfolio demo context — no backend needed, simpler deployment | ✓ Good — no deployment complexity |
+| MapLibre GL JS for rendering | User specified — tile-based renderer, OSM routing graph and animation overlaid as custom layers | ✓ Good — performant with large datasets |
+| OSM parsing in Web Worker | Large city extracts have hundreds of thousands of nodes — must not freeze UI | ✓ Good — UI stays responsive |
+| Union-find for disconnected component detection | Catch unreachable source/destination early before A* runs | ✓ Good — fast pre-check |
+| Frame-skip mechanism for slow animation | Linear nodesPerFrame formula bottlenecked at 1 node/frame; frame-skip allows sub-1 effective rate | ✓ Good — 10x slower min speed achieved |
+| Guard animation start on route.found | A* returns found=false with full searchHistory; was triggering silent exhaustive animation | ✓ Good — fixed, shows error toast immediately |
 
 ---
-*Last updated: 2026-03-12 after initialization*
+*Last updated: 2026-03-14 after v1.0 milestone*
