@@ -96,14 +96,14 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 2. Routing Engine | 3/4 | In Progress|  |
 | 3. Search Animation | 3/3 | Complete   | 2026-03-13 |
 | 4. Stats and Marker Interaction | 3/3 | Complete   | 2026-03-14 |
-| 5. One-way Streets and Access Restrictions | 0/2 | Planned | |
+| 5. One-way Streets and Access Restrictions | 1/2 | In Progress|  |
 
 ### Phase 5: Improve routing to respect OSM one-way streets and access restrictions — parse oneway=yes/-1 in buildAdjacency (car: directed, bike/pedestrian: bidirectional), add access=no/barrier/construction checks to canUseEdge
 
 **Goal:** Routing correctly enforces OSM one-way streets and access restrictions — cars follow directed edges, bikes respect one-ways with contraflow exception, pedestrians are always bidirectional; construction zones and barriers block appropriate modes
 **Requirements**: ONEWAY-01, ONEWAY-02, ONEWAY-03, ONEWAY-04, BARRIER-01, CONSTRUCTION-01
 **Depends on:** Phase 4
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 05-01-PLAN.md — Add onewayReversed?: boolean to AdjacencyEdge; update buildAdjacency to detect oneway=yes/-1 and set flag on correct directed edge

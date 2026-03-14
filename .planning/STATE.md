@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed quick-1-PLAN.md
-last_updated: "2026-03-14T11:31:39.168Z"
-last_activity: 2026-03-12 — Roadmap created
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-14T11:42:20.407Z"
+last_activity: "2026-03-14 - Completed quick task 1: Write a README.md at the top-level directory of the project"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 14
   percent: 0
 ---
 
@@ -67,6 +67,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 04-stats-and-marker-interaction P03 | 2 | 2 tasks | 3 files |
 | Phase 04-stats-and-marker-interaction P03 | 30 | 3 tasks | 3 files |
 | Phase quick P1 | 525566 | 1 tasks | 1 files |
+| Phase 05-improve-routing-oneway-access P01 | 1 | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,7 @@ Recent decisions affecting current work:
 - [Phase 04-stats-and-marker-interaction]: buildHandleMarkerDrag takes sourceSnap/destSnap as value params (not refs) to match test contract
 - [Phase 04-stats-and-marker-interaction]: dragend registered once at marker creation; setLngLat on subsequent snap updates does not re-register to avoid duplicate listeners
 - [Phase quick-1]: No .env.example existed — README instructs users to create .env manually with VITE_MAPTILER_API_KEY
+- [Phase 05-improve-routing-oneway-access]: onewayReversed: true marks blocked edge (B→A for oneway=yes, A→B for oneway=-1); graph stays bidirectional — enforcement deferred to canUseEdge in Plan 02
 
 ### Roadmap Evolution
 
@@ -133,6 +135,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T11:31:39.166Z
-Stopped at: Completed quick-1-PLAN.md
+Last session: 2026-03-14T11:42:20.405Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
