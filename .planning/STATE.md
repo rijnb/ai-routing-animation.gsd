@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-stats-and-marker-interaction 04-01-PLAN.md
-last_updated: "2026-03-14T10:14:47.770Z"
+stopped_at: Completed 04-stats-and-marker-interaction 04-02-PLAN.md
+last_updated: "2026-03-14T10:18:13.297Z"
 last_activity: 2026-03-12 — Roadmap created
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 13
-  completed_plans: 11
+  completed_plans: 12
   percent: 0
 ---
 
@@ -63,6 +63,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-search-animation P03 | 2 | 2 tasks | 3 files |
 | Phase 03-search-animation P03 | 25 | 3 tasks | 5 files |
 | Phase 04-stats-and-marker-interaction P01 | 2 | 2 tasks | 2 files |
+| Phase 04-stats-and-marker-interaction P02 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [Phase 03-search-animation]: SpeedPanel z-index 400 (above DropZone 300) — slider accessible when route active
 - [Phase 04-stats-and-marker-interaction]: buildHandleMarkerDrag factory export pattern chosen over mocking hook internals — enables unit testing without React context
 - [Phase 04-stats-and-marker-interaction]: formatTime(0) = 0 min edge case added to stats.test.ts for robustness
+- [Phase 04-stats-and-marker-interaction]: estimateTravelTime uses integer arithmetic to avoid float drift: Math.round((distanceMeters*3600)/(speedKmh*1000))
+- [Phase 04-stats-and-marker-interaction]: nodesExplored resets only on startAnimation, not cancelAnimation — holds final explored count after animation completes
 
 ### Pending Todos
 
@@ -112,6 +115,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T10:14:43.590Z
-Stopped at: Completed 04-stats-and-marker-interaction 04-01-PLAN.md
+Last session: 2026-03-14T10:18:13.294Z
+Stopped at: Completed 04-stats-and-marker-interaction 04-02-PLAN.md
 Resume file: None
