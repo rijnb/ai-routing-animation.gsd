@@ -39,8 +39,27 @@ export function useAnimation(): {
 
       setNodesExplored(0)
 
+      // Pre-build edge map: nodeId → list of { neighborId, segment coords }
+      type EdgeEntry = { neighborId: string; coords: [[number, number], [number, number]] }
+      const nodeEdges = new Map<string, EdgeEntry[]>()
+      for (const way of graph.ways) {
+        for (let i = 0; i < way.nodeRefs.length - 1; i++) {
+          const idA = way.nodeRefs[i]
+          const idB = way.nodeRefs[i + 1]
+          const coordA = graph.nodes.get(idA)
+          const coordB = graph.nodes.get(idB)
+          if (!coordA || !coordB) continue
+          if (!nodeEdges.has(idA)) nodeEdges.set(idA, [])
+          if (!nodeEdges.has(idB)) nodeEdges.set(idB, [])
+          nodeEdges.get(idA)!.push({ neighborId: idB, coords: [coordA, coordB] })
+          nodeEdges.get(idB)!.push({ neighborId: idA, coords: [coordB, coordA] })
+        }
+      }
+
       let cursor = 0
-      const visited: [number, number][] = []
+      const visitedSet = new Set<string>()
+      const visitedEdges: [number, number][][] = []
+      const seenEdges = new Set<string>()
 
       function frame() {
         const nodesPerFrame = computeNodesPerFrame(speedRef.current)
@@ -49,15 +68,26 @@ export function useAnimation(): {
         setNodesExplored(cursor)
 
         for (const id of batch) {
-          const coord = graph.nodes.get(id)
-          if (coord) visited.push(coord)
+          visitedSet.add(id)
+          const edges = nodeEdges.get(id)
+          if (edges) {
+            for (const { neighborId, coords } of edges) {
+              if (visitedSet.has(neighborId)) {
+                const key = id < neighborId ? `${id}|${neighborId}` : `${neighborId}|${id}`
+                if (!seenEdges.has(key)) {
+                  seenEdges.add(key)
+                  visitedEdges.push(coords)
+                }
+              }
+            }
+          }
         }
 
         const frontierCoords = batch
           .map(id => graph.nodes.get(id))
           .filter((c): c is [number, number] => c !== undefined)
 
-        updateFrontierLayers(map, visited, frontierCoords)
+        updateFrontierLayers(map, visitedEdges, frontierCoords)
 
         // Always show the full route path in red throughout the animation
         updateRouteLayer(map, route.path)

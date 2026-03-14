@@ -1,3 +1,12 @@
+/* Global font — consistent sans-serif across all dialogs, buttons, and inputs */
+body,
+button,
+input,
+select,
+textarea {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 /* Base layout — full viewport, dark background to match TomTom Basic Night */
 html,
 body {

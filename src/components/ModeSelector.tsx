@@ -21,10 +21,6 @@ const MODES: { value: RoutingMode; label: string; icon: string }[] = [
 
 const styles = {
   container: {
-    position: 'absolute' as const,
-    bottom: '24px',
-    right: '24px',
-    zIndex: 10,
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '8px',

@@ -8,11 +8,6 @@ export function SpeedPanel({ speed, onSpeedChange, visible }: SpeedPanelProps) {
   if (!visible) return null
   return (
     <div style={{
-      position: 'absolute',
-      bottom: '24px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      zIndex: 400,
       display: 'flex',
       alignItems: 'center',
       gap: '10px',
