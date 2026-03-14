@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Data Pipeline and Map Foundation** - Upload .osm.gz, parse in Web Worker, render road network on MapLibre base map (completed 2026-03-12)
 - [ ] **Phase 2: Routing Engine** - Click-to-set source/destination with segment snapping, A* with mode-aware search history, disconnected component handling
 - [x] **Phase 3: Search Animation** - Animated frontier expansion and simultaneous path growth with speed control (completed 2026-03-13)
-- [ ] **Phase 4: Stats and Marker Interaction** - Live stats panel, drag-to-reposition markers with route recalculation
+- [x] **Phase 4: Stats and Marker Interaction** - Live stats panel, drag-to-reposition markers with route recalculation (completed 2026-03-14)
 
 ## Phase Details
 
@@ -95,4 +95,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Data Pipeline and Map Foundation | 3/3 | Complete   | 2026-03-13 |
 | 2. Routing Engine | 3/4 | In Progress|  |
 | 3. Search Animation | 3/3 | Complete   | 2026-03-13 |
-| 4. Stats and Marker Interaction | 2/3 | In Progress|  |
+| 4. Stats and Marker Interaction | 3/3 | Complete   | 2026-03-14 |

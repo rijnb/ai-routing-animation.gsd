@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-stats-and-marker-interaction 04-02-PLAN.md
-last_updated: "2026-03-14T10:18:13.297Z"
+stopped_at: "Completed 04-stats-and-marker-interaction 04-03 Tasks 1-2, checkpoint:human-verify pending"
+last_updated: "2026-03-14T10:22:47.255Z"
 last_activity: 2026-03-12 — Roadmap created
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 13
-  completed_plans: 12
+  completed_plans: 13
   percent: 0
 ---
 
@@ -64,6 +64,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-search-animation P03 | 25 | 3 tasks | 5 files |
 | Phase 04-stats-and-marker-interaction P01 | 2 | 2 tasks | 2 files |
 | Phase 04-stats-and-marker-interaction P02 | 2 | 2 tasks | 3 files |
+| Phase 04-stats-and-marker-interaction P03 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,8 @@ Recent decisions affecting current work:
 - [Phase 04-stats-and-marker-interaction]: formatTime(0) = 0 min edge case added to stats.test.ts for robustness
 - [Phase 04-stats-and-marker-interaction]: estimateTravelTime uses integer arithmetic to avoid float drift: Math.round((distanceMeters*3600)/(speedKmh*1000))
 - [Phase 04-stats-and-marker-interaction]: nodesExplored resets only on startAnimation, not cancelAnimation — holds final explored count after animation completes
+- [Phase 04-stats-and-marker-interaction]: buildHandleMarkerDrag factory uses sourceSnap/destSnap as value params (not refs) to match test contract
+- [Phase 04-stats-and-marker-interaction]: dragend registered once at marker creation; setLngLat on subsequent snap updates does not re-register to avoid duplicate listeners
 
 ### Pending Todos
 
@@ -115,6 +118,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T10:18:13.294Z
-Stopped at: Completed 04-stats-and-marker-interaction 04-02-PLAN.md
+Last session: 2026-03-14T10:22:47.252Z
+Stopped at: Completed 04-stats-and-marker-interaction 04-03 Tasks 1-2, checkpoint:human-verify pending
 Resume file: None
