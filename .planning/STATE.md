@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-stats-and-marker-interaction 04-03-PLAN.md — Phase 4 complete
-last_updated: "2026-03-14T10:33:18.166Z"
+stopped_at: Phase 5 context gathered
+last_updated: "2026-03-14T11:09:01.010Z"
 last_activity: 2026-03-12 — Roadmap created
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
   total_plans: 13
   completed_plans: 13
@@ -111,6 +111,10 @@ Recent decisions affecting current work:
 - [Phase 04-stats-and-marker-interaction]: buildHandleMarkerDrag takes sourceSnap/destSnap as value params (not refs) to match test contract
 - [Phase 04-stats-and-marker-interaction]: dragend registered once at marker creation; setLngLat on subsequent snap updates does not re-register to avoid duplicate listeners
 
+### Roadmap Evolution
+
+- Phase 5 added: Improve routing to respect OSM one-way streets and access restrictions — parse oneway=yes/-1 in buildAdjacency (car: directed, bike/pedestrian: bidirectional), add access=no/barrier/construction checks to canUseEdge
+
 ### Pending Todos
 
 None yet.
@@ -121,6 +125,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T10:33:18.163Z
-Stopped at: Completed 04-stats-and-marker-interaction 04-03-PLAN.md — Phase 4 complete
-Resume file: None
+Last session: 2026-03-14T11:09:01.007Z
+Stopped at: Phase 5 context gathered
+Resume file: .planning/phases/05-improve-routing-to-respect-osm-one-way-streets-and-access-restrictions-parse-oneway-yes-1-in-buildadjacency-car-directed-bike-pedestrian-bidirectional-add-access-no-barrier-construction-checks-to-canuseedge/05-CONTEXT.md
