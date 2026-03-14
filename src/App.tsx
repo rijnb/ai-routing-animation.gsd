@@ -65,6 +65,10 @@ export default function App() {
   useEffect(() => {
     if (route && route !== prevRouteRef.current && graph && mapRef.current) {
       prevRouteRef.current = route
+      if (!route.found) {
+        setRoutingError('No route found between these points')
+        return
+      }
       startAnimation(mapRef.current, route, graph)
     }
   }, [route, graph, startAnimation])
