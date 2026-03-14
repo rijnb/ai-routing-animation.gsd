@@ -1,429 +1,389 @@
-# Architecture Research
+# Architecture
 
-**Domain:** Browser-based OSM routing visualization / pathfinding animation
-**Researched:** 2026-03-12
-**Confidence:** HIGH
+**Project:** AI Routing Animation — browser-based A* pathfinding visualiser on real OpenStreetMap data.
+**Stack:** TypeScript, React 19, Vite 8, MapLibre GL JS 5, fflate, Vitest
+**Status:** v1.0 complete (152 passing tests, ~3,900 lines of TypeScript/TSX)
 
-## Standard Architecture
+---
 
-### System Overview
+## System Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        UI Layer                                 │
-│  ┌──────────────┐  ┌───────────────┐  ┌─────────────────────┐  │
-│  │  FileLoader   │  │ MapControls   │  │ AnimationControls   │  │
-│  │  (drag/drop)  │  │ (click/mode)  │  │ (play/pause/speed)  │  │
-│  └──────┬───────┘  └───────┬───────┘  └──────────┬──────────┘  │
-├─────────┴───────────────────┴────────────────────┴──────────────┤
-│                     Application State                           │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  StateMachine: idle → loading → graphReady → routing →   │   │
-│  │                 animating → done                          │   │
-│  └──────────────────────────────────────────────────────────┘   │
+│                         React UI Layer                          │
+│  App.tsx (root, state wiring)                                   │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────────┐  │
+│  │ DropZone │ │MapView   │ │ModeSelect│ │StatsPanel +      │  │
+│  │          │ │(MapLibre)│ │SpeedPanel│ │LoadingOverlay +  │  │
+│  └──────────┘ └──────────┘ └──────────┘ │ApiKeyModal +     │  │
+│                                          │SettingsPanel     │  │
+│                                          └──────────────────┘  │
+├────────────────────────────────────────────────────────────────-┤
+│                     React Hooks (stateful logic)                │
+│  useOsmLoader   useRouter   useAnimation                        │
 ├─────────────────────────────────────────────────────────────────┤
-│                     Core Engine (runs in Web Worker)            │
-│  ┌────────────┐  ┌────────────┐  ┌──────────────────────┐      │
-│  │ OSM Parser │→ │ Graph      │→ │ A* Router            │      │
-│  │ (XML→data) │  │ Builder    │  │ (search + path)      │      │
-│  └────────────┘  └────────────┘  └──────────────────────┘      │
+│                     Core Library (pure functions)               │
+│  osmParser  graphBuilder  router  segmentSnap                   │
+│  mapHelpers  animationUtils  osmLoader  routeStats  apiKeyStore │
 ├─────────────────────────────────────────────────────────────────┤
-│                     Rendering Layer                              │
-│  ┌──────────────────────┐  ┌────────────────────────────┐      │
-│  │ MapLibre GL JS       │  │ AnimationRenderer          │      │
-│  │ (tiles + base map)   │  │ (GeoJSON source updates)   │      │
-│  └──────────────────────┘  └────────────────────────────┘      │
+│                     Web Worker                                  │
+│  osmWorker.ts  (parse → build → route, runs off main thread)   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Component Responsibilities
+---
 
-| Component | Responsibility | Boundary |
-|-----------|----------------|----------|
-| **FileLoader** | Accept .osm.gz file, decompress with DecompressionStream, hand raw XML to worker | Owns: file input UI, gzip decompression. Outputs: XML string/stream |
-| **OSMParser** | Parse OSM XML into structured node/way collections | Owns: XML SAX parsing, tag extraction. Outputs: raw OSM data (nodes Map, ways array) |
-| **GraphBuilder** | Convert OSM ways into a weighted directed graph for routing | Owns: intersection detection, edge creation, weight calculation. Outputs: Graph object |
-| **AStarRouter** | Run A* with mode-specific weights, record search history | Owns: priority queue, heuristic, visited tracking. Outputs: path + search history |
-| **StateMachine** | Track app lifecycle states, gate UI interactions | Owns: state transitions, event dispatch. No data transformation |
-| **MapControls** | Handle map click for source/destination, mode selection | Owns: click-to-node snapping, mode dropdown. Outputs: node IDs + mode |
-| **AnimationControls** | Play/pause/step/speed controls for search replay | Owns: playback state, speed multiplier. Outputs: animation commands |
-| **AnimationRenderer** | Step through search history, update MapLibre GeoJSON sources per frame | Owns: frame timing, GeoJSON construction. Reads: search history + path |
-| **MapLibre Integration** | Map instance, tile layers, GeoJSON sources for graph/animation | Owns: map lifecycle, layer management. Receives: GeoJSON updates |
-
-## Recommended Project Structure
+## Directory Structure
 
 ```
 src/
-├── main.ts                 # Entry point, wire everything together
-├── state/
-│   └── app-state.ts        # State machine (idle/loading/graphReady/routing/animating)
-├── osm/
-│   ├── decompress.ts       # DecompressionStream gzip handling
-│   ├── parser.ts           # SAX-style OSM XML parser
-│   └── types.ts            # OsmNode, OsmWay, OsmTag types
-├── graph/
-│   ├── graph.ts            # Graph data structure (adjacency list)
-│   ├── builder.ts          # OSM ways → graph edges
-│   ├── weights.ts          # Speed/access tables per routing mode
-│   └── types.ts            # GraphNode, GraphEdge, RoutingMode
-├── routing/
-│   ├── astar.ts            # A* implementation with search history recording
-│   ├── heuristic.ts        # Haversine distance heuristic
-│   └── types.ts            # SearchStep, RoutingResult
-├── worker/
-│   ├── routing-worker.ts   # Web Worker entry: parse → build → route
-│   └── messages.ts         # Typed message protocol (main ↔ worker)
-├── map/
-│   ├── map-manager.ts      # MapLibre instance, sources, layers
-│   ├── layers.ts           # Layer definitions (graph overlay, animation)
-│   └── click-handler.ts    # Click → nearest graph node snapping
-├── animation/
-│   ├── animator.ts         # Replay engine: steps through search history
-│   ├── renderer.ts         # Converts animation state → GeoJSON → setData
-│   └── controls.ts         # Play/pause/speed state
-└── ui/
-    ├── file-input.ts       # Drag-and-drop / file picker
-    ├── mode-selector.ts    # Car/bicycle/pedestrian toggle
-    └── status-bar.ts       # Loading progress, node/edge counts
+├── main.tsx                     # React entry point
+├── App.tsx                      # Root component — wires hooks to UI, owns mapRef
+│
+├── components/
+│   ├── ApiKeyModal.tsx           # First-run modal — collects TomTom API key
+│   ├── DropZone.tsx              # Drag-and-drop / file browse + bundled-map buttons
+│   ├── LoadingOverlay.tsx        # Full-screen semi-transparent progress overlay
+│   ├── MapView.tsx               # MapLibre GL JS wrapper; manages map lifecycle and layers
+│   ├── ModeSelector.tsx          # Car / Bicycle / Pedestrian toggle buttons
+│   ├── SettingsPanel.tsx         # Gear-icon settings dropdown (clear API key)
+│   ├── SpeedPanel.tsx            # Animation speed slider (0.5x – 5x)
+│   └── StatsPanel.tsx            # Live stats: nodes explored, distance, estimated time
+│
+├── hooks/
+│   ├── useAnimation.ts           # requestAnimationFrame loop; drives frontier + route layers
+│   ├── useOsmLoader.ts           # Worker lifecycle, load-file dispatch, progress/done state
+│   └── useRouter.ts              # Click-to-route, mode changes, marker drag, worker messages
+│
+├── lib/
+│   ├── animationUtils.ts         # filterHistory, computeFrameParams (speed → nodes/frame)
+│   ├── apiKeyStore.ts            # localStorage read/write/clear for TomTom API key
+│   ├── graphBuilder.ts           # OSM ways → GeoJSON + adjacency list + UnionFind components
+│   ├── mapHelpers.ts             # All MapLibre source/layer helpers (add, update, clear)
+│   ├── osmLoader.ts              # File → ArrayBuffer → postMessage to worker
+│   ├── osmParser.ts              # Regex-based OSM XML parser (runs in worker scope)
+│   ├── router.ts                 # A* engine, canUseEdge access matrix, haversineMeters
+│   ├── routeStats.ts             # estimateTravelTime, formatDistance, formatTime
+│   └── segmentSnap.ts            # Project click point onto nearest accessible road segment
+│
+└── workers/
+    └── osmWorker.ts              # Web Worker: load → decompress → parse → build → route
 ```
 
-### Structure Rationale
+---
 
-- **osm/:** Isolated from graph concerns. Parser produces raw OSM data; it does not know about graphs. This separation allows swapping parsers (XML, PBF) without touching graph code.
-- **graph/:** Pure data structure, no UI or map dependencies. The builder transforms OSM data into a graph; weights.ts encodes routing mode logic separately so it can be unit tested.
-- **routing/:** A* is a pure function: graph in, result out. Search history recording is the only "side effect" and it is just array accumulation. No DOM or map dependencies.
-- **worker/:** Thin orchestration layer that imports osm/, graph/, routing/ and runs them in a Worker context. Message types are shared with the main thread.
-- **map/:** All MapLibre-specific code lives here. Nothing else imports maplibre-gl. This makes the core engine testable without a map.
-- **animation/:** Owns the temporal dimension. The animator decides which search step to show at time T; the renderer translates that to GeoJSON. Separation from map/ means animation logic is testable without MapLibre.
+## Module Responsibilities
 
-## Architectural Patterns
+### `src/workers/osmWorker.ts`
 
-### Pattern 1: Web Worker for Heavy Computation
+The only Web Worker. Maintains two persistent module-level variables across messages:
 
-**What:** Run OSM parsing, graph building, and A* routing in a dedicated Web Worker. Main thread stays responsive for map interaction and animation.
+- `osmGraph: OsmGraph | null` — the parsed OSM graph (nodes, ways, barrierNodes)
+- `adjacency: AdjacencyList | null` — the built routing graph
 
-**When to use:** Always. Parsing a city-sized OSM file (100K+ nodes) and running A* are blocking operations that would freeze the UI for seconds.
+Handles two message types:
 
-**Trade-offs:**
-- Pro: UI never freezes during parsing/routing
-- Pro: Can report progress back via postMessage
-- Con: Data must be serialized across the worker boundary (structured clone)
-- Con: Slightly more complex development (message passing vs direct calls)
+| Message in | What it does | Messages out |
+|---|---|---|
+| `ArrayBuffer` (legacy) or `{ type: 'load', buffer }` | gunzipSync → parse → buildRoadGeoJson → buildAdjacency | `progress` (×3), `done` |
+| `{ type: 'route', source, destination, mode }` | snapToNearestSegment ×2 → inject virtual nodes → aStar | `route-done` or `route-error` |
 
-**Implementation approach:**
-```typescript
-// messages.ts - shared types
-type WorkerRequest =
-  | { type: 'parse-and-build'; osmXml: string; mode: RoutingMode }
-  | { type: 'route'; from: number; to: number; mode: RoutingMode };
+**Virtual node pattern for segment snapping:** When routing, the worker creates two virtual node IDs (`__vs__` for start, `__ve__` for end). It injects them into a shallow-copied adjacency list so A* starts/ends at the snapped point rather than the nearest graph node. The `__vs__` and `__ve__` entries are filtered out of `searchHistory` before animation (see `filterHistory`).
 
-type WorkerResponse =
-  | { type: 'progress'; stage: string; percent: number }
-  | { type: 'graph-ready'; nodeCount: number; edgeCount: number; bbox: BBox }
-  | { type: 'route-result'; path: number[]; searchHistory: SearchStep[] }
-  | { type: 'error'; message: string };
-```
+### `src/lib/osmParser.ts`
 
-**Key detail:** The graph stays in the worker. Only the routing result (path coordinates + search history as coordinate arrays) crosses the boundary. Do NOT transfer the entire graph to the main thread -- it can be megabytes. Instead, the worker resolves node IDs to [lng, lat] coordinates before sending results.
+Parses an OSM XML string using regex (not DOMParser — DOMParser is unavailable in Web Workers).
 
-### Pattern 2: Typed Adjacency List Graph
+**Key outputs** (`OsmGraph`):
+- `nodes: Map<string, [lon, lat]>` — all OSM nodes, GeoJSON coordinate order
+- `ways: OsmWay[]` — road-classified ways only, with `id`, `nodeRefs[]`, `tags`
+- `barrierNodes: Map<string, string>` — nodes with a `barrier` tag (e.g. `bollard`, `gate`)
 
-**What:** Represent the road network as a Map of node IDs to edge arrays. Each edge carries the target node, distance, and mode-specific traversal cost.
+Road filter: only `highway` values in a fixed `ROAD_TYPES` set are kept.
 
-**When to use:** For A* on OSM road networks with mode-specific routing.
+### `src/lib/graphBuilder.ts`
 
-**Trade-offs:**
-- Pro: O(1) neighbor lookup, memory-efficient for sparse graphs (road networks are sparse)
-- Pro: Typed edges allow different weights per mode without rebuilding the graph
-- Con: Less cache-friendly than flat typed arrays for very large graphs
+Two exported functions:
 
-**Data structure:**
-```typescript
-interface GraphNode {
-  id: number;        // OSM node ID
-  lat: number;
-  lon: number;
-}
+**`buildRoadGeoJson(ways, nodes)`** — converts ways to a `FeatureCollection<LineString>` for the road overlay layer. Each feature carries `properties.highway`.
 
-interface GraphEdge {
-  target: number;           // target node ID
-  distance: number;         // meters (haversine between endpoints)
-  highwayType: HighwayType; // e.g., 'primary', 'residential', 'cycleway'
-  oneway: boolean;
-  access: AccessFlags;      // { car: boolean; bicycle: boolean; foot: boolean }
-}
+**`buildAdjacency(ways, nodes, barrierNodes?)`** — builds a bidirectional weighted adjacency list:
+- Edge weight = haversine distance in metres between consecutive way nodes
+- One-way enforcement: `oneway=yes` sets `onewayReversed: true` on the reverse edge; `oneway=-1` sets it on the forward edge
+- Barrier propagation: if node B has a barrier tag, the A→B edge carries `barrier: <value>` in its tags; and vice versa for B→A
+- Also runs **UnionFind** (path-compressed disjoint-set) over all connected nodes, returning a `ComponentMap` (`nodeId → root representative`) for fast disconnectivity detection in the router hook
 
-// Adjacency list: node ID → outgoing edges
-type Graph = {
-  nodes: Map<number, GraphNode>;
-  edges: Map<number, GraphEdge[]>;
-};
-```
+### `src/lib/router.ts`
 
-**Why store highway type on edges instead of pre-computed speed:** Different routing modes need different interpretations of the same edge. A `residential` road is 50 km/h for cars but irrelevant for pedestrians (who walk at ~5 km/h everywhere). By storing the highway type, the A* cost function selects the appropriate weight at query time without rebuilding the graph when the user switches modes.
+Three exports used widely across the codebase:
 
-### Pattern 3: Search History as Recorded Steps
+**`haversineMeters(a, b)`** — full haversine formula, earth radius 6371km. Used for both edge weights and the A* heuristic.
 
-**What:** During A* execution, record every node expansion as a SearchStep. The animation engine replays these steps sequentially.
+**`canUseEdge(edge, mode)`** — returns `false` if the edge is inaccessible for the given mode. Checks in order:
+1. `highway=construction` or `construction=yes` → block all
+2. Highway type access matrix (`HIGHWAY_ACCESS`) — e.g. motorway blocks bicycle/pedestrian
+3. `access=no`, `access=private/destination/permit/customers` (car only), mode-specific tag overrides (`foot=no`, `bicycle=no`, `motor_vehicle=no`, `motorcar=no`, `vehicle=no`)
+4. Barrier type matrix (wall/fence block all; bollard/gate/pole/etc block cars; kissing_gate/stile/turnstile block cars and bikes)
+5. `onewayReversed` — blocks cars; blocks bikes unless `oneway:bicycle=no`; pedestrians are always allowed
 
-**When to use:** Always -- this is how the "search frontier animation" works.
+**`aStar(adjacency, startId, goalId, nodes, mode)`** — standard A* with haversine heuristic. Returns `RouteResult`:
+- `path: [number, number][]` — lon/lat coordinates of optimal path (empty if no route)
+- `searchHistory: string[]` — node IDs in exploration order (used to drive animation)
+- `distance: number` — total metres
+- `found: boolean`
 
-**Trade-offs:**
-- Pro: Complete decoupling of routing from animation. A* runs to completion; animation replays at leisure
-- Pro: Enables pause, step, rewind, speed change without re-running A*
-- Con: Memory proportional to explored nodes (typically 10K-50K steps for city routing -- manageable)
+The open set is a plain `Set<string>` iterated linearly to find minimum fScore (adequate for city-scale graphs).
 
-**Structure:**
-```typescript
-interface SearchStep {
-  nodeId: number;
-  coords: [number, number];   // [lng, lat]
-  gScore: number;             // cost so far
-  fScore: number;             // estimated total cost
-  parentId: number | null;
-  isOnPath: boolean;          // true if this node is on the final optimal path
-}
+### `src/lib/segmentSnap.ts`
 
-interface RoutingResult {
-  path: [number, number][];       // ordered coordinates of optimal path
-  searchHistory: SearchStep[];    // every expansion in order
-  stats: { explored: number; pathLength: number; duration: number };
-}
-```
+**`snapToNearestSegment(clickPoint, graph, mode, maxDistanceMeters)`** — iterates all way segments accessible for `mode`, projects `clickPoint` onto each segment using flat-earth cosine-corrected projection, returns the nearest projected point within `maxDistanceMeters` as a `SnapResult`:
+- `snappedPoint: [lon, lat]` — the projected point on the road
+- `segmentNodeA`, `segmentNodeB` — the OSM node IDs bounding the segment
+- `t` — parameter in [0, 1] along the segment
+- `distanceMeters` — distance from click to snap
 
-### Pattern 4: GeoJSON Source Mutation for Animation
+Used both in the worker (for virtual node injection) and on the main thread (in `useRouter` for immediate UI snap feedback before sending to worker).
 
-**What:** MapLibre renders the animation via GeoJSON sources that are mutated each frame using `source.setData()`. Two sources: one for the search frontier (points/circles), one for the path (line).
+### `src/lib/mapHelpers.ts`
 
-**When to use:** For any frame-by-frame map animation in MapLibre.
+All MapLibre source/layer management. No routing or parsing logic.
 
-**Trade-offs:**
-- Pro: Native MapLibre pattern (well-documented, GPU-accelerated rendering)
-- Pro: setData on a single source is efficient for moderate feature counts
-- Con: Rebuilding full GeoJSON each frame is wasteful for 50K+ features -- batch in chunks instead
+**Layers added at map load (in z-order bottom to top):**
 
-**Implementation approach:**
-- **frontier-source** (GeoJSON, circle layer): accumulates explored nodes. Update every N steps per frame (not every single step -- batch 10-50 steps per animation frame for smooth playback).
-- **path-source** (GeoJSON, line layer): the red optimal path. Grows as the frontier "discovers" path nodes. Pre-calculated, so show path segments up to the current frontier position.
-- Use `requestAnimationFrame` for timing. A speed multiplier controls how many search steps advance per frame.
+| Source/Layer ID | Type | Purpose |
+|---|---|---|
+| `roads` / `roads-layer` | GeoJSON LineString | Road network overlay (colour-coded by highway type) |
+| `visited-nodes` / `visited-nodes-layer` | GeoJSON LineString | Explored road segments (cyan, animation) |
+| `frontier-nodes` / `frontier-nodes-layer` | GeoJSON Point | Current frontier nodes (red circles, animation) |
+| `snap-indicator` / `snap-indicator-layer` | GeoJSON LineString | Dashed orange line: raw click → snapped point |
+| `markers` / `markers-layer` | GeoJSON Point | Source (green) and destination (red) circle markers |
+| `route` / `route-layer` | GeoJSON LineString | Optimal A* path (bold red, always visible during animation) |
 
-### Pattern 5: Finite State Machine for App Lifecycle
+Key helpers: `addRoadLayer`, `updateRoadData`, `fitRoadBounds`, `addFrontierLayers`, `addRouteLayers`, `updateFrontierLayers`, `updateRouteLayer`, `updateMarkersLayer`, `updateSnapIndicatorLayer`, `clearFrontierLayers`, `clearFrontierDots`.
 
-**What:** The app has clear sequential states. Use an explicit state machine to prevent invalid transitions (e.g., cannot start routing without a graph, cannot animate without a route).
+`clearFrontierDots` (called on natural animation end) removes only the red frontier-node dots while keeping the cyan visited-edge overlay. `clearFrontierLayers` (called on map click or new file) clears both.
 
-**States and transitions:**
-```
-idle ──[file loaded]──→ loading ──[parse complete]──→ graphReady
-                                                         │
-graphReady ──[src+dst+mode selected]──→ routing ──[route found]──→ animating
-                                                                      │
-animating ──[animation complete]──→ done ──[new route]──→ routing
-                                         ──[new file]──→ loading
-```
+### `src/lib/animationUtils.ts`
+
+**`filterHistory(searchHistory)`** — strips `__vs__` and `__ve__` virtual node IDs from search history before animation.
+
+**`computeFrameParams(multiplier)`** — maps speed slider value (0.5–5.0) to:
+- `nodesPerFrame` — how many history entries to advance per active RAF tick (`max(1, round(7 * multiplier))`)
+- `frameSkip` — only advance every Nth RAF tick; 1 for multiplier ≥ 1.0, scales to 10 at multiplier = 0.5 for dramatically slower playback at the slow end
+
+### `src/lib/routeStats.ts`
+
+`estimateTravelTime(distanceMeters, mode)` — divides distance by mode speed (car=50 km/h, bike=15 km/h, pedestrian=5 km/h). `formatDistance` and `formatTime` for display strings.
+
+### `src/lib/apiKeyStore.ts`
+
+Thin wrapper around `localStorage` for the TomTom API key (`key: 'tomtom_api_key'`). Three functions: `getApiKey`, `saveApiKey`, `clearApiKey`.
+
+### `src/lib/osmLoader.ts`
+
+Single function `handleFile(file, worker)` — reads a `File` as an `ArrayBuffer` and transfers it to the worker via `postMessage` with the transferable buffer (zero-copy).
+
+---
+
+## React Hooks
+
+### `useOsmLoader`
+
+Creates the Worker once on mount (cleaned up on unmount). Exposes:
+- `loadFile(file)` — calls `osmLoader.handleFile`, resets all state
+- `stage`, `percent` — loading progress for `LoadingOverlay`
+- `geojson` — road GeoJSON passed to `MapView`
+- `graph` — full `OsmGraph` kept on main thread for snapping and animation edge-map building
+- `componentMap` — union-find result for disconnectivity detection
+- `workerRef` — shared with `useRouter` so both hooks can attach listeners to the same Worker
+
+### `useRouter`
+
+Manages click-to-route state machine and worker communication:
+- Maintains `clickCountRef` (mod 2): even clicks set source, odd clicks set destination
+- Calls `snapToNearestSegment` on the main thread for immediate snap-point UI feedback
+- Checks `componentMap` for connectivity before sending route request to worker
+- Subscribes to `route-done` and `route-error` messages via `addEventListener` (not `onmessage`, so `useOsmLoader` listener is not displaced)
+- `setMode` auto-re-routes if both endpoints exist
+- `handleMarkerDrag` delegates to pure `buildHandleMarkerDrag` factory (exported for unit testing)
+- `resetRouting` called by `App.tsx` on new file load
+
+### `useAnimation`
+
+Drives the `requestAnimationFrame` loop. On `startAnimation(map, route, graph)`:
+1. Calls `filterHistory` to strip virtual nodes
+2. Pre-builds a `nodeEdges` edge map from `graph.ways` for O(1) neighbour lookup per frame
+3. Each frame: advances `cursor` by `nodesPerFrame` (skipping frames when `frameSkip > 1`), accumulates `visitedEdges` and `visitedSet`, extracts `frontierCoords` for the current batch, calls `updateFrontierLayers` and `updateRouteLayer`
+4. On animation end: calls `clearFrontierDots` to remove red dots while keeping cyan road overlay
+
+`cancelAnimation` cancels any pending RAF and is called by `App.tsx` before every new map click and on new file load.
+
+---
+
+## Component Responsibilities
+
+| Component | Responsibility |
+|---|---|
+| `App.tsx` | Root; wires `useOsmLoader`, `useRouter`, `useAnimation`; holds `mapRef`; auto-starts animation on route change; clears state on new file |
+| `MapView` | MapLibre lifecycle; initialises all sources/layers on `load`; reactive `useEffect` blocks for geojson, route, snap indicator, and draggable source/destination markers |
+| `DropZone` | Drag-and-drop, file browse, and bundled-map fetch buttons (`/maps/leiden.osm.gz`, `/maps/amsterdam.osm.gz`) |
+| `ModeSelector` | Car/Bicycle/Pedestrian toggle; `aria-pressed` accessibility |
+| `SpeedPanel` | Range input 0.5–5.0 step 0.5; visible only when route exists |
+| `StatsPanel` | Live nodes-explored / total, distance, estimated travel time; top-right overlay |
+| `LoadingOverlay` | Animated progress bar; `opacity: 0; pointer-events: none` when not visible (CSS fade) |
+| `ApiKeyModal` | First-run gate; stores key in localStorage; shown when `getApiKey()` returns null |
+| `SettingsPanel` | Gear button; shows masked API key; "Clear key" resets to ApiKeyModal |
+
+---
 
 ## Data Flow
 
-### Primary Pipeline
+### File Load Pipeline
 
 ```
-User drops .osm.gz file
+User drops/selects .osm.gz
     ↓
-[Main Thread] DecompressionStream → XML string
-    ↓ (postMessage: XML string to worker)
-[Web Worker] OSM Parser → { nodes: Map, ways: Way[] }
+DropZone.onFile → App.loadFile → osmLoader.handleFile
+    ↓ (ArrayBuffer transferred to worker)
+osmWorker: gunzipSync (fflate) → TextDecoder → parseOsmXml
     ↓
-[Web Worker] Graph Builder → { nodes: Map, edges: Map }
-    ↓ (postMessage: graph-ready + bbox)
-[Main Thread] Fit map to bbox, enable click-to-route
+osmWorker: buildRoadGeoJson + buildAdjacency (with UnionFind)
+    ↓ postMessage({ type: 'done', geojson, componentMap, graph })
+useOsmLoader: setGeojson / setGraph / setComponentMap
     ↓
-User clicks source + destination, selects mode
-    ↓ (postMessage: route request)
-[Web Worker] A* Router → { path, searchHistory }
-    ↓ (postMessage: routing result with coordinates)
-[Main Thread] AnimationRenderer replays searchHistory
-    ↓ (requestAnimationFrame loop)
-[Main Thread] frontier-source.setData() + path-source.setData()
+MapView: updateRoadData + fitRoadBounds
+App: cancelAnimation + clearFrontierLayers + resetRouting
+```
+
+### Routing Pipeline
+
+```
+User clicks map
     ↓
-MapLibre renders updated layers each frame
+MapView.onClick → App.handleMapClickWithCancel
+    → cancelAnimation + clearFrontierLayers
+    → useRouter.handleMapClick
+        → snapToNearestSegment (main thread, for immediate marker display)
+        → componentMap connectivity check
+        → workerRef.postMessage({ type: 'route', source, destination, mode })
+    ↓
+osmWorker.handleRoute:
+    snapToNearestSegment (worker, for virtual node injection)
+    → inject VIRTUAL_START / VIRTUAL_END into shallow-copied adjacency
+    → aStar(virtualAdjacency, '__vs__', '__ve__', extendedNodes, mode)
+    → replace virtual coords with actual snapped points in path
+    → postMessage({ type: 'route-done', path, searchHistory, distance, found })
+    ↓
+useRouter: setRoute → App useEffect detects route change
+    → useAnimation.startAnimation(map, route, graph)
 ```
 
-### Worker Communication Protocol
+### Animation Frame Loop
 
 ```
-Main → Worker:  { type: 'parse-and-build', osmXml, mode }
-Worker → Main:  { type: 'progress', stage: 'parsing', percent: 30 }
-Worker → Main:  { type: 'progress', stage: 'building', percent: 70 }
-Worker → Main:  { type: 'graph-ready', nodeCount, edgeCount, bbox }
-
-Main → Worker:  { type: 'route', from: nodeId, to: nodeId, mode }
-Worker → Main:  { type: 'progress', stage: 'routing', percent: 50 }
-Worker → Main:  { type: 'route-result', path, searchHistory }
+startAnimation:
+    filterHistory (strip __vs__, __ve__)
+    build nodeEdges map from graph.ways
+    ↓ requestAnimationFrame loop
+Each frame:
+    computeFrameParams(speedRef.current)
+    frame-skip check
+    slice history[cursor … cursor+nodesPerFrame]
+    accumulate visitedEdges (edges between two visited nodes, deduped)
+    extract frontierCoords (current batch only)
+    updateFrontierLayers(map, visitedEdges, frontierCoords)
+    updateRouteLayer(map, route.path)   ← full path always visible
+    setNodesExplored(cursor)
+    ↓ on completion:
+    clearFrontierDots (remove red dots, keep cyan road overlay)
 ```
 
-### Key Data Flows
-
-1. **File → Graph:** Gzip bytes → XML string → OSM nodes/ways → filtered road ways → graph adjacency list. All in worker except decompression (needs browser Streams API on main thread -- though worker also supports DecompressionStream).
-2. **Graph → Route:** User click coordinates → snap to nearest graph node (worker does spatial lookup) → A* runs → path + full search history returned as coordinate arrays.
-3. **Route → Animation:** Search history array drives a frame-by-frame index. Each frame advances the index by `stepsPerFrame * speed`. GeoJSON features accumulate (frontier grows, path grows). Two `setData()` calls per frame.
-
-## OSM Parsing and Graph Building Details
-
-### Two-Pass Processing
-
-OSM XML must be processed in two passes because ways reference node IDs that may appear later in the file:
-
-1. **Pass 1 -- Collect Nodes:** Build a `Map<nodeId, {lat, lon}>` from all `<node>` elements.
-2. **Pass 2 -- Process Ways:** For each `<way>` with a `highway=*` tag, resolve node references to coordinates. Create graph edges between consecutive nodes in the way.
-
-For SAX-style parsing (recommended for large files), use a streaming XML parser. The DOMParser approach loads the entire XML into memory as a DOM tree -- wasteful for large files. A SAX parser processes elements as they stream through.
-
-### Intersection Detection
-
-Not every OSM node becomes a graph node. Only **intersection nodes** (referenced by 2+ ways) and **dead-end nodes** (first/last in a way) become graph vertices. Intermediate nodes along a road are collapsed into the edge geometry. This dramatically reduces graph size:
-
-- Raw OSM nodes for a small city: ~200,000
-- Graph nodes (intersections + dead-ends): ~20,000-40,000
-
-**Algorithm:**
-1. First pass: count how many ways reference each node ID
-2. Nodes with count >= 2 are intersections
-3. When building edges, split ways at intersection nodes
-
-### Routing Mode Weights
-
-| Highway Type | Car Speed (km/h) | Car Access | Bicycle Access | Pedestrian Access |
-|---|---|---|---|---|
-| motorway | 120 | yes | no | no |
-| trunk | 90 | yes | no | no |
-| primary | 70 | yes | yes | yes |
-| secondary | 60 | yes | yes | yes |
-| tertiary | 50 | yes | yes | yes |
-| residential | 30 | yes | yes | yes |
-| living_street | 20 | yes | yes | yes |
-| cycleway | -- | no | yes | no |
-| footway | -- | no | no | yes |
-| path | -- | no | yes | yes |
-| pedestrian | -- | no | no | yes |
-| service | 20 | yes | yes | yes |
-
-Bicycle speed: ~15 km/h on roads, ~12 km/h on paths. Pedestrian speed: ~5 km/h everywhere.
-
-Edge cost for A* = `distance / speed_for_mode`. Inaccessible edges get infinite cost (filtered out during neighbor iteration).
-
-## Scaling Considerations
-
-This is a portfolio demo, but OSM file sizes vary widely:
-
-| Scale | Nodes | Graph Nodes | Approach |
-|-------|-------|-------------|----------|
-| Neighborhood (~1MB .osm.gz) | ~10K | ~2K | Everything instant, no optimization needed |
-| Small city (~10MB .osm.gz) | ~200K | ~30K | Worker essential, parsing takes 1-3s |
-| Large city (~50MB .osm.gz) | ~1M | ~150K | Streaming parser critical, animation must batch aggressively |
-
-### Scaling Priorities
-
-1. **First bottleneck -- parsing:** Large OSM XML files take seconds to parse. SAX/streaming parser + Web Worker keeps UI responsive. Show progress bar.
-2. **Second bottleneck -- animation frame rate:** With 50K+ explored nodes, rebuilding full GeoJSON every frame gets expensive. Batch: add features incrementally rather than rebuilding from scratch. Keep a running GeoJSON object and push new features into its array.
-3. **Third bottleneck -- memory:** Search history for large graphs can be 50K+ entries. Each SearchStep with coordinates is ~50 bytes, so ~2.5MB. Acceptable. The graph itself is the bigger memory consumer -- adjacency list for 150K nodes with edges is ~20-50MB.
-
-## Anti-Patterns
-
-### Anti-Pattern 1: Transferring the Full Graph to Main Thread
-
-**What people do:** Build graph in worker, then postMessage the entire graph object to main thread for rendering.
-**Why it is wrong:** Structured cloning a Map with 150K entries and edge arrays takes hundreds of milliseconds and doubles memory usage. The main thread does not need the graph.
-**Do this instead:** Keep the graph in the worker. The worker resolves coordinates before sending results. The main thread only receives coordinate arrays for rendering.
-
-### Anti-Pattern 2: Animating Every Single Search Step Per Frame
-
-**What people do:** One requestAnimationFrame = one search step shown on map.
-**Why it is wrong:** A* explores thousands of nodes. At 60fps, animating one node per frame takes minutes for a medium graph. Users lose patience.
-**Do this instead:** Batch N steps per frame. Default to ~50 steps/frame at 1x speed. At "fast" speed, batch 200+. At "step" mode, advance exactly 1. This gives controllable speed without tedium.
-
-### Anti-Pattern 3: Rebuilding Full GeoJSON from Scratch Each Frame
-
-**What people do:** On each animation frame, construct a new GeoJSON FeatureCollection from all explored nodes so far.
-**Why it is wrong:** At step 30,000, you are creating a 30K-feature GeoJSON object 60 times per second. GC pressure and serialization overhead tank performance.
-**Do this instead:** Keep a persistent GeoJSON object. Each frame, push new features into the existing features array and call setData with the same object. MapLibre's setData accepts the mutated reference.
-
-### Anti-Pattern 4: Using DOMParser for Large OSM XML
-
-**What people do:** `new DOMParser().parseFromString(xml, 'text/xml')` then querySelectorAll.
-**Why it is wrong:** Loads entire XML into a DOM tree in memory. A 50MB XML file becomes a ~200MB DOM tree. Parsing itself takes seconds, then querying is slow.
-**Do this instead:** Use a streaming/SAX XML parser that processes elements one at a time. In a worker, you can use a lightweight SAX parser (e.g., sax-wasm or a simple custom state machine for the limited OSM XML schema).
-
-### Anti-Pattern 5: Computing Haversine Distance in the A* Hot Loop
-
-**What people do:** Call the full haversine formula (with sin, cos, atan2, sqrt) for every edge cost and heuristic evaluation during A*.
-**Why it is wrong:** Trig functions are expensive. A* may evaluate hundreds of thousands of edges.
-**Do this instead:** Pre-compute edge distances during graph building (one-time cost). For the heuristic, use the equirectangular approximation: `dx = (lon2-lon1) * cos(avgLat); dy = lat2-lat1; d = sqrt(dx*dx + dy*dy) * R`. One cos call instead of four trig calls. Good enough for city-scale distances.
-
-## Integration Points
-
-### Internal Boundaries
-
-| Boundary | Communication | Data Crossing the Boundary |
-|----------|---------------|---------------------------|
-| Main thread <-> Web Worker | postMessage / onmessage | XML string in, progress events + coordinate arrays out |
-| StateMachine <-> UI Components | Event dispatch / callbacks | State names, enable/disable signals |
-| AnimationRenderer <-> MapLibre | source.setData(geojson) | GeoJSON FeatureCollection objects |
-| User Click <-> Worker | postMessage with coordinates | Click coords in, nearest node ID + coords out |
-
-### External Services
-
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| MapLibre tile server | Map style URL (e.g., OSM raster or vector tiles) | Free tile sources: OpenFreeMap, Stadia, MapTiler free tier |
-| None (no backend) | -- | All processing is client-side |
-
-## Build Order (Dependencies)
-
-Components should be built in this order based on dependencies:
+### Worker Message Protocol
 
 ```
-Phase 1: Foundation
-  ├── Types (osm/types.ts, graph/types.ts, routing/types.ts)
-  ├── State machine (state/app-state.ts)
-  └── MapLibre setup (map/map-manager.ts with base tiles)
+Main → Worker:
+  ArrayBuffer                                  (legacy load: raw .osm.gz bytes)
+  { type: 'load', buffer: ArrayBuffer }        (explicit load)
+  { type: 'route', source, destination, mode } (route request)
 
-Phase 2: Data Pipeline
-  ├── Gzip decompression (osm/decompress.ts)
-  ├── OSM XML parser (osm/parser.ts)
-  ├── Graph builder with weights (graph/builder.ts, graph/weights.ts)
-  └── Worker orchestration (worker/routing-worker.ts, worker/messages.ts)
-
-Phase 3: Routing
-  ├── A* with search history (routing/astar.ts, routing/heuristic.ts)
-  ├── Click-to-node snapping (map/click-handler.ts)
-  └── Mode selection (ui/mode-selector.ts)
-
-Phase 4: Animation
-  ├── Animation engine (animation/animator.ts)
-  ├── GeoJSON renderer (animation/renderer.ts)
-  ├── MapLibre layers (map/layers.ts)
-  └── Animation controls (animation/controls.ts)
-
-Phase 5: Polish
-  ├── Graph overlay visualization
-  ├── Progress indicators
-  ├── Error handling
-  └── Performance tuning
+Worker → Main:
+  { type: 'progress', stage: string, pct: number }
+  { type: 'done', geojson, componentMap, graph }
+  { type: 'route-done', path, searchHistory, distance, found }
+  { type: 'route-error', message: string }
+  { type: 'error', message: string }
 ```
-
-**Rationale:** Each phase produces a working (if incomplete) artifact. Phase 1 gets a map on screen. Phase 2 can display the parsed graph as a debug overlay. Phase 3 computes routes. Phase 4 animates them. Phase 5 makes it portfolio-worthy.
-
-## Sources
-
-- [MapLibre GL JS - Animate a Line example](https://maplibre.org/maplibre-gl-js/docs/examples/animate-a-line/) -- GeoJSON source mutation pattern with requestAnimationFrame
-- [MapLibre GL JS - GeoJSONSource API](https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/) -- setData method documentation
-- [OSM tags for routing / Access restrictions](https://wiki.openstreetmap.org/wiki/OSM_tags_for_routing/Access_restrictions) -- default access by highway type and vehicle
-- [OSM tags for routing / Maxspeed](https://wiki.openstreetmap.org/wiki/OSM_tags_for_routing/Maxspeed) -- default speed values per highway type
-- [Red Blob Games - Introduction to A*](https://www.redblobgames.com/pathfinding/a-star/introduction.html) -- frontier expansion visualization patterns
-- [MDN - DecompressionStream API](https://developer.mozilla.org/en-US/docs/Web/API/DecompressionStream) -- browser-native gzip decompression
-- [MDN - Compression Streams API](https://developer.mozilla.org/en-US/docs/Web/API/Compression_Streams_API) -- streaming decompression support
-- [OSM Help - Building a graph from OSM XML](https://help.openstreetmap.org/questions/38328/building-a-graph-out-of-osm-xml) -- intersection detection and edge creation patterns
-- [Building a Weighted Graph based on OSM Data for Routing](https://socialhub.technion.ac.il/wp-content/uploads/2017/08/revise_version-final.pdf) -- academic reference for OSM graph construction
 
 ---
-*Architecture research for: Browser-based OSM routing animation*
-*Researched: 2026-03-12*
+
+## Key Architectural Decisions
+
+### Regex XML Parser in Worker
+
+`osmParser.ts` uses regex (not `DOMParser`) because `DOMParser` is unavailable in Web Worker scope. The parser handles both self-closing (`<node ... />`) and block (`<node ...><tag .../></node>`) node forms. It emits `barrierNodes` as a side product of the node parse pass.
+
+### Graph Stays in Worker; Results are Coordinate Arrays
+
+The `OsmGraph` object is sent back to the main thread in the `done` message for two reasons: (1) `useAnimation` needs `graph.ways` and `graph.nodes` to build the per-frame edge map, and (2) `useRouter` needs `graph` for main-thread snap. However the `AdjacencyList` stays in the worker and is never transferred.
+
+### Segment Snapping Runs Twice
+
+`snapToNearestSegment` is called on the main thread (in `useRouter.handleMapClick`) to provide immediate visual feedback (marker placement, snap indicator line) before the route result arrives. It is also called inside the worker (`handleRoute`) to inject virtual nodes. Both calls use the same logic from `segmentSnap.ts`.
+
+### Virtual Nodes for Mid-Segment Start/End
+
+Rather than snapping to the nearest graph node, routing starts and ends at the perpendicular projection onto the nearest road segment. Two virtual node IDs (`__vs__`, `__ve__`) are injected into a shallow-copied adjacency list with edges to/from the two real segment endpoints. This ensures the path begins and ends at the actual click point rather than jumping to an intersection.
+
+### One-Way and Barrier Enforcement via Edge Tags
+
+One-way direction and barrier information are encoded on edges at graph-build time, not during A*. `onewayReversed: true` means this edge direction opposes the way's oneway declaration. Barriers are propagated from `barrierNodes` into edge tags during `buildAdjacency`. `canUseEdge` reads these at query time, making the same graph reusable across routing modes without rebuilding.
+
+### Animation Speed: nodesPerFrame + frameSkip
+
+Two parameters control perceived animation speed. `nodesPerFrame` controls how many history nodes advance per active RAF tick (linear with slider). `frameSkip` skips RAF ticks entirely below 1.0x speed, giving a much wider effective range without changing the fast-end feel. At 0.5x speed: ~4 nodes every 10 ticks ≈ 24 nodes/sec. At 5x speed: 35 nodes every tick ≈ 2100 nodes/sec.
+
+### UnionFind for Disconnectivity Detection
+
+Before sending a route request to the worker, `useRouter.triggerRoute` checks that both snap points share the same connected component using `componentMap`. This provides an instant error message ("points are on disconnected road segments") without a round-trip to the worker.
+
+---
+
+## Testing
+
+152 passing tests in `src/__tests__/` using Vitest + jsdom.
+
+| Test file | Coverage |
+|---|---|
+| `osmParser.test.ts` | XML parsing, node/way extraction, barrier node detection |
+| `osmPipeline.test.ts` | End-to-end parse → build adjacency integration |
+| `graphBuilder.test.ts` | buildAdjacency edge creation, oneway flags, barrier propagation, UnionFind |
+| `router.test.ts` | A* pathfinding, canUseEdge access matrix, haversine |
+| `segmentSnap.test.ts` | Segment projection, mode filtering, distance threshold |
+| `animation.test.ts` | filterHistory, computeFrameParams, slicePath |
+| `stats.test.ts` | estimateTravelTime, formatDistance, formatTime |
+| `dropZone.test.ts` | DropZone drag-and-drop and click behaviour |
+| `modeSelector.test.tsx` | ModeSelector rendering and button interaction |
+| `markerDrag.test.ts` | buildHandleMarkerDrag pure factory logic |
+
+---
+
+## External Dependencies
+
+| Package | Version | Role |
+|---|---|---|
+| `maplibre-gl` | ^5.20.0 | Map rendering; tile layer, GeoJSON sources, markers |
+| `react` / `react-dom` | ^19.2.4 | UI framework |
+| `fflate` | ^0.8.2 | Synchronous gzip decompression (`gunzipSync`) in the worker |
+| Tile provider | TomTom Maps API | Vector tile style; API key stored in localStorage |
+
+Tile URL pattern: `https://api.tomtom.com/style/1/style/*?key=<KEY>&map=basic_night`
+
+---
+
+## Bundled Map Data
+
+Two sample `.osm.gz` files are served from `public/maps/`:
+- `leiden.osm.gz` — city of Leiden, Netherlands
+- `amsterdam.osm.gz` — city of Amsterdam, Netherlands
+
+These are fetched via `fetch('/maps/<filename>')` when the user clicks the quick-start buttons in `DropZone`.
