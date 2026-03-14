@@ -6,11 +6,14 @@ import { DropZone } from './components/DropZone'
 import { LoadingOverlay } from './components/LoadingOverlay'
 import { ModeSelector } from './components/ModeSelector'
 import { SpeedPanel } from './components/SpeedPanel'
+import { StatsPanel } from './components/StatsPanel'
 import { getApiKey, clearApiKey } from './lib/apiKeyStore'
 import { useOsmLoader } from './hooks/useOsmLoader'
 import { useRouter } from './hooks/useRouter'
 import { useAnimation } from './hooks/useAnimation'
 import { clearFrontierLayers } from './lib/mapHelpers'
+import { filterHistory } from './lib/animationUtils'
+import { estimateTravelTime } from './lib/routeStats'
 import type { RouteResult } from './lib/router'
 import maplibregl from 'maplibre-gl'
 
@@ -28,9 +31,10 @@ export default function App() {
     routeError,
     handleMapClick,
     resetRouting,
+    handleMarkerDrag,
   } = useRouter(workerRef, graph, componentMap)
 
-  const { speed, setSpeed, startAnimation, cancelAnimation } = useAnimation()
+  const { speed, setSpeed, startAnimation, cancelAnimation, nodesExplored } = useAnimation()
   const mapRef = useRef<maplibregl.Map | null>(null)
 
   const isLoading = stage !== '' && geojson === null
@@ -92,6 +96,21 @@ export default function App() {
     handleMapClick(lngLat)
   }, [cancelAnimation, handleMapClick])
 
+  // Cancel animation and clear frontier layers on marker drag (same pattern as map click)
+  const handleMarkerDragWithCancel = useCallback(
+    (which: 'source' | 'destination', lngLat: [number, number]) => {
+      cancelAnimation()
+      if (mapRef.current) clearFrontierLayers(mapRef.current)
+      handleMarkerDrag(which, lngLat)
+    },
+    [cancelAnimation, handleMarkerDrag],
+  )
+
+  // Derived stats values
+  const totalNodes = route ? filterHistory(route.searchHistory).length : 0
+  const distanceKm = route?.found ? route.distance / 1000 : null
+  const travelTimeSeconds = route?.found ? estimateTravelTime(route.distance, mode) : null
+
   // Show ApiKeyModal if no key stored
   if (!apiKey) {
     return <ApiKeyModal onSave={(key) => setApiKey(key)} />
@@ -104,6 +123,7 @@ export default function App() {
           apiKey={apiKey}
           geojson={geojson}
           onMapClick={handleMapClickWithCancel}
+          onMarkerDrag={handleMarkerDragWithCancel}
           routePath={route?.path ?? []}
           sourceSnap={sourceSnap}
           destSnap={destSnap}
@@ -113,6 +133,13 @@ export default function App() {
           onMapReady={m => { mapRef.current = m }}
         />
         <SpeedPanel speed={speed} onSpeedChange={setSpeed} visible={route !== null} />
+        <StatsPanel
+          nodesExplored={nodesExplored}
+          totalNodes={totalNodes}
+          distanceKm={distanceKm}
+          travelTimeSeconds={travelTimeSeconds}
+          visible={route !== null}
+        />
       </div>
 
       <LoadingOverlay stage={stage} percent={percent} visible={isLoading} />

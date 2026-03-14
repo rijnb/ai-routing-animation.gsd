@@ -25,6 +25,7 @@ interface MapViewProps {
   lastSnapPoint?: [number, number] | null
   graph?: OsmGraph | null
   onMapReady?: (map: maplibregl.Map) => void
+  onMarkerDrag?: (which: 'source' | 'destination', lngLat: [number, number]) => void
 }
 
 export function MapView({
@@ -40,6 +41,7 @@ export function MapView({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   graph: _graph,
   onMapReady,
+  onMarkerDrag,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
@@ -53,6 +55,14 @@ export function MapView({
   useEffect(() => {
     onMapReadyRef.current = onMapReady
   })
+  // Stable ref for onMarkerDrag — same stale-closure prevention pattern as onMapClickRef
+  const onMarkerDragRef = useRef(onMarkerDrag)
+  useEffect(() => {
+    onMarkerDragRef.current = onMarkerDrag
+  })
+  // Refs for draggable marker instances
+  const sourceMarkerRef = useRef<maplibregl.Marker | null>(null)
+  const destMarkerRef = useRef<maplibregl.Marker | null>(null)
 
   // Create map once (re-mounts if apiKey changes)
   useEffect(() => {
@@ -94,14 +104,57 @@ export function MapView({
     fitRoadBounds(mapRef.current, geojson)
   }, [geojson])
 
-  // React to routing prop changes
+  // React to routing prop changes — updateMarkersLayer removed: draggable DOM markers replace GeoJSON circles
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return
     updateRouteLayer(map, routePath ?? [])
-    updateMarkersLayer(map, sourceSnap ?? null, destSnap ?? null)
     updateSnapIndicatorLayer(map, lastClickPoint ?? null, lastSnapPoint ?? null)
-  }, [routePath, sourceSnap, destSnap, lastClickPoint, lastSnapPoint])
+  }, [routePath, lastClickPoint, lastSnapPoint])
+
+  // Manage draggable source marker
+  useEffect(() => {
+    if (!mapRef.current || !loadedRef.current) return
+    if (!sourceSnap) {
+      sourceMarkerRef.current?.remove()
+      sourceMarkerRef.current = null
+      return
+    }
+    if (!sourceMarkerRef.current) {
+      const marker = new maplibregl.Marker({ draggable: true, color: '#22bb44' })
+        .setLngLat(sourceSnap.snappedPoint)
+        .addTo(mapRef.current)
+      marker.on('dragend', () => {
+        const lngLat = marker.getLngLat()
+        onMarkerDragRef.current?.('source', [lngLat.lng, lngLat.lat])
+      })
+      sourceMarkerRef.current = marker
+    } else {
+      sourceMarkerRef.current.setLngLat(sourceSnap.snappedPoint)
+    }
+  }, [sourceSnap])
+
+  // Manage draggable destination marker
+  useEffect(() => {
+    if (!mapRef.current || !loadedRef.current) return
+    if (!destSnap) {
+      destMarkerRef.current?.remove()
+      destMarkerRef.current = null
+      return
+    }
+    if (!destMarkerRef.current) {
+      const marker = new maplibregl.Marker({ draggable: true, color: '#ee4444' })
+        .setLngLat(destSnap.snappedPoint)
+        .addTo(mapRef.current)
+      marker.on('dragend', () => {
+        const lngLat = marker.getLngLat()
+        onMarkerDragRef.current?.('destination', [lngLat.lng, lngLat.lat])
+      })
+      destMarkerRef.current = marker
+    } else {
+      destMarkerRef.current.setLngLat(destSnap.snappedPoint)
+    }
+  }, [destSnap])
 
   return (
     <div
