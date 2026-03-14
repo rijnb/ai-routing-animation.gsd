@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { filterHistory, slicePath, computeNodesPerFrame } from '../../src/lib/animationUtils'
+import { filterHistory, slicePath, computeNodesPerFrame, computeFrameParams } from '../../src/lib/animationUtils'
 
 describe('filterHistory', () => {
   it('removes __vs__ and __ve__ entries from array', () => {
@@ -81,5 +81,43 @@ describe('computeNodesPerFrame', () => {
 
   it('multiplier=0 floors at 1', () => {
     expect(computeNodesPerFrame(0)).toBe(1)
+  })
+})
+
+describe('computeFrameParams', () => {
+  it('at max speed (5.0): nodesPerFrame=35 and frameSkip=1 (no skipping)', () => {
+    const { nodesPerFrame, frameSkip } = computeFrameParams(5.0)
+    expect(nodesPerFrame).toBe(35)
+    expect(frameSkip).toBe(1)
+  })
+
+  it('at default speed (1.0): nodesPerFrame=7 and frameSkip=1', () => {
+    const { nodesPerFrame, frameSkip } = computeFrameParams(1.0)
+    expect(nodesPerFrame).toBe(7)
+    expect(frameSkip).toBe(1)
+  })
+
+  it('at min speed (0.5): nodesPerFrame=4 and frameSkip=10 (maximum slowdown)', () => {
+    const { nodesPerFrame, frameSkip } = computeFrameParams(0.5)
+    expect(nodesPerFrame).toBe(4)
+    expect(frameSkip).toBe(10)
+  })
+
+  it('frameSkip is always at least 1', () => {
+    for (const m of [0.5, 1.0, 2.0, 5.0]) {
+      expect(computeFrameParams(m).frameSkip).toBeGreaterThanOrEqual(1)
+    }
+  })
+
+  it('frameSkip is at most 10', () => {
+    for (const m of [0.5, 1.0, 2.0, 5.0]) {
+      expect(computeFrameParams(m).frameSkip).toBeLessThanOrEqual(10)
+    }
+  })
+
+  it('higher speed always produces frameSkip <= lower speed frameSkip', () => {
+    const slow = computeFrameParams(0.5).frameSkip
+    const fast = computeFrameParams(5.0).frameSkip
+    expect(fast).toBeLessThanOrEqual(slow)
   })
 })

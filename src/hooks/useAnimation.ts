@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import maplibregl from 'maplibre-gl'
-import { filterHistory, computeNodesPerFrame } from '../lib/animationUtils'
+import { filterHistory, computeFrameParams } from '../lib/animationUtils'
 import { updateFrontierLayers, updateRouteLayer, clearFrontierLayers, clearFrontierDots } from '../lib/mapHelpers'
 import type { RouteResult } from '../lib/router'
 import type { OsmGraph } from '../lib/osmParser'
@@ -57,12 +57,25 @@ export function useAnimation(): {
       }
 
       let cursor = 0
+      let tickCounter = 0
       const visitedSet = new Set<string>()
       const visitedEdges: [number, number][][] = []
       const seenEdges = new Set<string>()
 
       function frame() {
-        const nodesPerFrame = computeNodesPerFrame(speedRef.current)
+        const { nodesPerFrame, frameSkip } = computeFrameParams(speedRef.current)
+
+        // Frame-skipping: only advance the cursor every `frameSkip` RAF ticks.
+        // This makes the slow end of the slider dramatically slower without
+        // changing behaviour at the fast end (where frameSkip === 1).
+        tickCounter += 1
+        if (tickCounter % frameSkip !== 0) {
+          if (cursor < total) {
+            rafHandleRef.current = requestAnimationFrame(frame)
+          }
+          return
+        }
+
         const batch = history.slice(cursor, cursor + nodesPerFrame)
         cursor += nodesPerFrame
         setNodesExplored(cursor)
