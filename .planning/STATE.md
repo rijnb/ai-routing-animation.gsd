@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 Phase: 1 of 4 (Data Pipeline and Map Foundation)
 Plan: 0 of 3 in current phase
 Status: Ready to plan
-Last activity: 2026-03-12 — Roadmap created
+Last activity: 2026-03-14 - Completed quick task 1: Write a README.md at the top-level directory of the project
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -120,6 +120,12 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 None yet.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Write a README.md at the top-level directory of the project | 2026-03-14 | 06beba2 | [1-write-a-readme-md-at-the-top-level-direc](./quick/1-write-a-readme-md-at-the-top-level-direc/) |
 
 ### Blockers/Concerns
 
