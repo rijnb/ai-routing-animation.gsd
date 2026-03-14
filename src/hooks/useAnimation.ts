@@ -10,8 +10,10 @@ export function useAnimation(): {
   setSpeed: (v: number) => void
   startAnimation: (map: maplibregl.Map, route: RouteResult, graph: OsmGraph) => void
   cancelAnimation: () => void
+  nodesExplored: number
 } {
   const [speed, setSpeed] = useState<number>(1.0)
+  const [nodesExplored, setNodesExplored] = useState<number>(0)
   const speedRef = useRef<number>(1.0)
   const rafHandleRef = useRef<number | null>(null)
 
@@ -35,6 +37,8 @@ export function useAnimation(): {
       const total = history.length
       if (total === 0) return
 
+      setNodesExplored(0)
+
       let cursor = 0
       const visited: [number, number][] = []
 
@@ -42,6 +46,7 @@ export function useAnimation(): {
         const nodesPerFrame = computeNodesPerFrame(speedRef.current)
         const batch = history.slice(cursor, cursor + nodesPerFrame)
         cursor += nodesPerFrame
+        setNodesExplored(cursor)
 
         for (const id of batch) {
           const coord = graph.nodes.get(id)
@@ -69,5 +74,5 @@ export function useAnimation(): {
     [cancelAnimation],
   )
 
-  return { speed, setSpeed, startAnimation, cancelAnimation }
+  return { speed, setSpeed, startAnimation, cancelAnimation, nodesExplored }
 }
