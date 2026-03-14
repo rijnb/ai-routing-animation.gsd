@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import maplibregl from 'maplibre-gl'
 import { filterHistory, computeNodesPerFrame } from '../lib/animationUtils'
-import { updateFrontierLayers, updateRouteLayer } from '../lib/mapHelpers'
+import { updateFrontierLayers, updateRouteLayer, clearFrontierLayers, clearFrontierDots } from '../lib/mapHelpers'
 import type { RouteResult } from '../lib/router'
 import type { OsmGraph } from '../lib/osmParser'
 
@@ -96,6 +96,7 @@ export function useAnimation(): {
           rafHandleRef.current = requestAnimationFrame(frame)
         } else {
           rafHandleRef.current = null
+          clearFrontierDots(map)
         }
       }
 

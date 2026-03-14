@@ -270,8 +270,18 @@ export function updateFrontierLayers(
 
 /**
  * clearFrontierLayers — resets both frontier sources to empty FeatureCollections.
+ * Use on new route start / map click to wipe the full animation state.
  */
 export function clearFrontierLayers(map: maplibregl.Map): void {
   ;(map.getSource('visited-nodes') as GeoJSONSource | undefined)?.setData(EMPTY_FC)
+  ;(map.getSource('frontier-nodes') as GeoJSONSource | undefined)?.setData(EMPTY_FC)
+}
+
+/**
+ * clearFrontierDots — resets only the frontier-nodes source to an empty FeatureCollection.
+ * Use on natural animation completion to remove the last-frame red dots while keeping
+ * the visited-nodes (cyan road) overlay visible.
+ */
+export function clearFrontierDots(map: maplibregl.Map): void {
   ;(map.getSource('frontier-nodes') as GeoJSONSource | undefined)?.setData(EMPTY_FC)
 }
