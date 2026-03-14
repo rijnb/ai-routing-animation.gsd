@@ -115,4 +115,59 @@ describe('buildAdjacency', () => {
       expect(adjacency['Y'].some((e) => e.to === 'X')).toBe(true)
     })
   })
+
+  describe('buildAdjacency — oneway detection', () => {
+    const onewayNodes = new Map<string, [number, number]>([
+      ['A', [4.9000, 52.3700]],
+      ['B', [4.9010, 52.3700]],
+    ])
+
+    it('oneway=yes: B→A edge has onewayReversed: true; A→B edge does not', () => {
+      const ways = [
+        { id: 'w1', nodeRefs: ['A', 'B'], tags: { highway: 'residential', oneway: 'yes' } },
+      ]
+      const { adjacency } = buildAdjacency(ways, onewayNodes)
+
+      // edgeBA (B→A) must have onewayReversed: true
+      const edgeBA = adjacency['B'].find((e) => e.to === 'A')
+      expect(edgeBA).toBeDefined()
+      expect(edgeBA!.onewayReversed).toBe(true)
+
+      // edgeAB (A→B) must NOT have onewayReversed set to true
+      const edgeAB = adjacency['A'].find((e) => e.to === 'B')
+      expect(edgeAB).toBeDefined()
+      expect(edgeAB!.onewayReversed).toBeFalsy()
+    })
+
+    it('oneway=-1: A→B edge has onewayReversed: true; B→A edge does not', () => {
+      const ways = [
+        { id: 'w1', nodeRefs: ['A', 'B'], tags: { highway: 'residential', oneway: '-1' } },
+      ]
+      const { adjacency } = buildAdjacency(ways, onewayNodes)
+
+      // edgeAB (A→B) must have onewayReversed: true
+      const edgeAB = adjacency['A'].find((e) => e.to === 'B')
+      expect(edgeAB).toBeDefined()
+      expect(edgeAB!.onewayReversed).toBe(true)
+
+      // edgeBA (B→A) must NOT have onewayReversed set to true
+      const edgeBA = adjacency['B'].find((e) => e.to === 'A')
+      expect(edgeBA).toBeDefined()
+      expect(edgeBA!.onewayReversed).toBeFalsy()
+    })
+
+    it('no oneway tag: neither edge has onewayReversed set to true', () => {
+      const ways = [
+        { id: 'w1', nodeRefs: ['A', 'B'], tags: { highway: 'residential' } },
+      ]
+      const { adjacency } = buildAdjacency(ways, onewayNodes)
+
+      const edgeAB = adjacency['A'].find((e) => e.to === 'B')
+      const edgeBA = adjacency['B'].find((e) => e.to === 'A')
+      expect(edgeAB).toBeDefined()
+      expect(edgeBA).toBeDefined()
+      expect(edgeAB!.onewayReversed).toBeFalsy()
+      expect(edgeBA!.onewayReversed).toBeFalsy()
+    })
+  })
 })
