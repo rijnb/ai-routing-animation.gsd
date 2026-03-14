@@ -69,24 +69,18 @@ export default function App() {
     }
   }, [route, graph, startAnimation])
 
-  // Cancel animation and clear layers when OSM is reset (stage returns to idle)
-  useEffect(() => {
-    if (stage === 'idle') {
-      cancelAnimation()
-      if (mapRef.current) clearFrontierLayers(mapRef.current)
-    }
-  }, [stage, cancelAnimation])
-
   // Track previous geojson to detect new file load
   const prevGeojsonRef = useRef<typeof geojson>(null)
   useEffect(() => {
     if (geojson !== null && prevGeojsonRef.current === null) {
-      // New OSM file loaded — reset routing state
+      // New OSM file loaded — cancel any in-flight animation, clear ghost layers, reset routing state
+      cancelAnimation()
+      if (mapRef.current) clearFrontierLayers(mapRef.current)
       resetRouting()
       setLastClickPoint(null)
     }
     prevGeojsonRef.current = geojson
-  }, [geojson, resetRouting])
+  }, [geojson, cancelAnimation, resetRouting])
 
   // Cancel animation and clear frontier layers on new map click
   const handleMapClickWithCancel = useCallback((lngLat: [number, number]) => {
@@ -132,7 +126,6 @@ export default function App() {
           graph={graph}
           onMapReady={m => { mapRef.current = m }}
         />
-        <SpeedPanel speed={speed} onSpeedChange={setSpeed} visible={route !== null} />
         <StatsPanel
           nodesExplored={nodesExplored}
           totalNodes={totalNodes}
@@ -153,12 +146,21 @@ export default function App() {
         }}
       />
 
+      {/* Speed slider + mode buttons grouped at bottom-right */}
       {geojson && (
-        <ModeSelector
-          mode={mode}
-          onModeChange={setMode}
-          visible={true}
-        />
+        <div style={{
+          position: 'absolute',
+          bottom: '24px',
+          right: '24px',
+          zIndex: 400,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          alignItems: 'stretch',
+        }}>
+          <SpeedPanel speed={speed} onSpeedChange={setSpeed} visible={route !== null} />
+          <ModeSelector mode={mode} onModeChange={setMode} />
+        </div>
       )}
 
       {visibleError && (
