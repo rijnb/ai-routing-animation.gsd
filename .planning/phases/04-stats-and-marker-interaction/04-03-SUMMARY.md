@@ -60,7 +60,7 @@ completed: 2026-03-14
 - **Duration:** 2 min
 - **Started:** 2026-03-14T10:19:21Z
 - **Completed:** 2026-03-14T10:21:45Z
-- **Tasks:** 2 of 3 complete (Task 3 is human-verify checkpoint)
+- **Tasks:** 3 of 3 complete
 - **Files modified:** 3
 
 ## Accomplishments
@@ -75,7 +75,7 @@ Each task was committed atomically:
 
 1. **Task 1: Add handleMarkerDrag to useRouter and turn markerDrag tests GREEN** - `ea50584` (feat)
 2. **Task 2: MapView draggable markers + App.tsx wiring** - `59dce49` (feat)
-3. **Task 3: Human verify** - awaiting checkpoint
+3. **Task 3: Human verify — draggable markers and live stats** - `db71a7f` (docs — plan metadata commit, human approved)
 
 ## Files Created/Modified
 - `src/hooks/useRouter.ts` - Added `buildHandleMarkerDrag` factory export, `handleMarkerDrag` useCallback, extended `RouterState` interface
@@ -109,9 +109,16 @@ None - both code tasks executed cleanly.
 None - no external service configuration required.
 
 ## Next Phase Readiness
-- All Phase 4 requirements implemented and tested
-- Human verification of drag interaction and StatsPanel needed to confirm MAP-04, STAT-01/02/03 requirements
-- Application ready for browser testing: `npm run dev`, load .osm.gz, verify draggable markers and live stats
+
+Phase 4 is complete. All four phases of the roadmap are finished:
+- Phase 1: Data Pipeline and Map Foundation
+- Phase 2: Routing Engine
+- Phase 3: Search Animation
+- Phase 4: Stats and Marker Interaction
+
+Human checkpoint confirmed all Phase 4 features work correctly in browser: drag-to-reroute (source and destination), live node counter during animation, distance and travel time after route completion, no duplicate GeoJSON circle markers under draggable markers, SpeedPanel continues working alongside StatsPanel.
+
+The application is feature-complete: A* pathfinding animation on real OpenStreetMap data with mode-aware routing, draggable markers, live stats panel, and speed control.
 
 ---
 *Phase: 04-stats-and-marker-interaction*
