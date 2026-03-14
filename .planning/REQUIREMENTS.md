@@ -17,7 +17,7 @@
 - [x] **MAP-01**: User can click the map to set a source point — snaps to the nearest road segment suitable for the selected routing mode within 200m, at the interpolated point on that segment
 - [x] **MAP-02**: User can click the map to set a destination point — snaps to the nearest suitable road segment within 200m, at the interpolated point on that segment
 - [x] **MAP-03**: User can pan and zoom the map at any time, including during animation
-- [ ] **MAP-04**: User can drag the source or destination marker to a new position, triggering a full route recalculation
+- [x] **MAP-04**: User can drag the source or destination marker to a new position, triggering a full route recalculation
 
 ### Routing
 
@@ -33,9 +33,9 @@
 
 ### Stats
 
-- [ ] **STAT-01**: Live counter shows nodes explored during animation
-- [ ] **STAT-02**: Path distance in km is displayed after route is found
-- [ ] **STAT-03**: Estimated travel time is displayed, derived from routing mode speeds
+- [x] **STAT-01**: Live counter shows nodes explored during animation
+- [x] **STAT-02**: Path distance in km is displayed after route is found
+- [x] **STAT-03**: Estimated travel time is displayed, derived from routing mode speeds
 
 ## v2 Requirements
 
@@ -74,16 +74,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MAP-01 | Phase 2 | Complete |
 | MAP-02 | Phase 2 | Complete |
 | MAP-03 | Phase 1 | Complete |
-| MAP-04 | Phase 4 | Pending |
+| MAP-04 | Phase 4 | Complete |
 | ROUT-01 | Phase 2 | Complete |
 | ROUT-02 | Phase 2 | Complete |
 | ROUT-03 | Phase 2 | Complete |
 | ANIM-01 | Phase 3 | Complete |
 | ANIM-02 | Phase 3 | Complete |
 | ANIM-03 | Phase 3 | Complete |
-| STAT-01 | Phase 4 | Pending |
-| STAT-02 | Phase 4 | Pending |
-| STAT-03 | Phase 4 | Pending |
+| STAT-01 | Phase 4 | Complete |
+| STAT-02 | Phase 4 | Complete |
+| STAT-03 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 17 total
