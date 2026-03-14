@@ -175,6 +175,96 @@ describe('canUseEdge', () => {
         expect(canUseEdge(edge({ highway: 'residential', barrier: 'cycle_barrier' }), 'bicycle')).toBe(true)
       })
     })
+
+    describe('jersey_barrier — blocks all modes', () => {
+      it('blocks car', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'jersey_barrier' }), 'car')).toBe(false)
+      })
+
+      it('blocks bicycle', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'jersey_barrier' }), 'bicycle')).toBe(false)
+      })
+
+      it('blocks pedestrian', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'jersey_barrier' }), 'pedestrian')).toBe(false)
+      })
+    })
+
+    describe('pole — blocks car only', () => {
+      it('blocks car', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'pole' }), 'car')).toBe(false)
+      })
+
+      it('allows bicycle', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'pole' }), 'bicycle')).toBe(true)
+      })
+
+      it('allows pedestrian', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'pole' }), 'pedestrian')).toBe(true)
+      })
+    })
+
+    describe('block — blocks car only', () => {
+      it('blocks car', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'block' }), 'car')).toBe(false)
+      })
+
+      it('allows bicycle', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'block' }), 'bicycle')).toBe(true)
+      })
+    })
+
+    describe('chain — blocks car only', () => {
+      it('blocks car', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'chain' }), 'car')).toBe(false)
+      })
+
+      it('allows bicycle', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'chain' }), 'bicycle')).toBe(true)
+      })
+
+      it('allows pedestrian', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'chain' }), 'pedestrian')).toBe(true)
+      })
+    })
+
+    describe('planter — blocks car only', () => {
+      it('blocks car', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'planter' }), 'car')).toBe(false)
+      })
+
+      it('allows bicycle', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'planter' }), 'bicycle')).toBe(true)
+      })
+    })
+
+    describe('stile — blocks car and bicycle, allows pedestrian', () => {
+      it('blocks car', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'stile' }), 'car')).toBe(false)
+      })
+
+      it('blocks bicycle', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'stile' }), 'bicycle')).toBe(false)
+      })
+
+      it('allows pedestrian', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'stile' }), 'pedestrian')).toBe(true)
+      })
+    })
+
+    describe('turnstile — blocks car and bicycle, allows pedestrian', () => {
+      it('blocks car', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'turnstile' }), 'car')).toBe(false)
+      })
+
+      it('blocks bicycle', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'turnstile' }), 'bicycle')).toBe(false)
+      })
+
+      it('allows pedestrian', () => {
+        expect(canUseEdge(edge({ highway: 'residential', barrier: 'turnstile' }), 'pedestrian')).toBe(true)
+      })
+    })
   })
 })
 

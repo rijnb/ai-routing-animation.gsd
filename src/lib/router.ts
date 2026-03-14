@@ -94,9 +94,12 @@ export function canUseEdge(
   const barrier = tags['barrier']
   if (barrier) {
     const blocksAll = barrier === 'wall' || barrier === 'fence' || barrier === 'hedge'
+                   || barrier === 'jersey_barrier'
     const blocksCar = barrier === 'bollard' || barrier === 'gate' || barrier === 'lift_gate'
-                   || barrier === 'cycle_barrier'
-    const blocksCarAndBike = barrier === 'kissing_gate'
+                   || barrier === 'cycle_barrier' || barrier === 'pole' || barrier === 'block'
+                   || barrier === 'chain' || barrier === 'planter'
+    const blocksCarAndBike = barrier === 'kissing_gate' || barrier === 'stile'
+                          || barrier === 'turnstile'
     if (blocksAll) return false
     if (blocksCarAndBike && (mode === 'car' || mode === 'bicycle')) return false
     if (blocksCar && mode === 'car') return false
