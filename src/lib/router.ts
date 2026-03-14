@@ -8,6 +8,7 @@ export interface AdjacencyEdge {
   to: string
   weight: number // meters (haversine)
   tags: Record<string, string>
+  onewayReversed?: boolean
 }
 
 export type AdjacencyList = Record<string, AdjacencyEdge[]>

@@ -109,8 +109,21 @@ export function buildAdjacency(
       if (!adjacency[idA]) adjacency[idA] = []
       if (!adjacency[idB]) adjacency[idB] = []
 
-      const edgeAB: AdjacencyEdge = { to: idB, weight, tags: way.tags }
-      const edgeBA: AdjacencyEdge = { to: idA, weight, tags: way.tags }
+      const isOneway = way.tags['oneway'] === 'yes'
+      const isOnewayMinus1 = way.tags['oneway'] === '-1'
+
+      const edgeAB: AdjacencyEdge = {
+        to: idB,
+        weight,
+        tags: way.tags,
+        onewayReversed: isOnewayMinus1 ? true : undefined,
+      }
+      const edgeBA: AdjacencyEdge = {
+        to: idA,
+        weight,
+        tags: way.tags,
+        onewayReversed: isOneway ? true : undefined,
+      }
 
       adjacency[idA].push(edgeAB)
       adjacency[idB].push(edgeBA)
