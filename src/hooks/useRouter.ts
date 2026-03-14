@@ -16,6 +16,41 @@ export interface RouterState {
   routeError: string | null
   handleMapClick: (lngLat: [number, number]) => void
   resetRouting: () => void
+  handleMarkerDrag: (which: 'source' | 'destination', lngLat: [number, number]) => void
+}
+
+/**
+ * Pure factory for handleMarkerDrag logic — exported for unit testing without React context.
+ */
+export function buildHandleMarkerDrag(deps: {
+  graph: OsmGraph | null
+  mode: RoutingMode
+  sourceSnap: SnapResult | null
+  destSnap: SnapResult | null
+  setSourceSnap: (s: SnapResult) => void
+  setDestSnap: (s: SnapResult) => void
+  triggerRoute: (src: SnapResult, dst: SnapResult, mode: RoutingMode) => void
+}): (which: 'source' | 'destination', lngLat: [number, number]) => void {
+  return (which: 'source' | 'destination', lngLat: [number, number]) => {
+    if (!deps.graph) return
+
+    const snap = snapToNearestSegment(lngLat, deps.graph, deps.mode, 200)
+    if (!snap) return
+
+    if (which === 'source') {
+      deps.setSourceSnap(snap)
+      const dst = deps.destSnap
+      if (dst) {
+        deps.triggerRoute(snap, dst, deps.mode)
+      }
+    } else {
+      deps.setDestSnap(snap)
+      const src = deps.sourceSnap
+      if (src) {
+        deps.triggerRoute(src, snap, deps.mode)
+      }
+    }
+  }
 }
 
 export function useRouter(
@@ -150,6 +185,30 @@ export function useRouter(
     setRouteError(null)
   }, [])
 
+  const handleMarkerDrag = useCallback(
+    (which: 'source' | 'destination', lngLat: [number, number]) => {
+      const handler = buildHandleMarkerDrag({
+        graph,
+        mode: modeRef.current,
+        sourceSnap: sourceSnapRef.current,
+        destSnap: destSnapRef.current,
+        setSourceSnap: (s: SnapResult) => {
+          setSourceSnap(s)
+          sourceSnapRef.current = s
+          setRoute(null)
+        },
+        setDestSnap: (s: SnapResult) => {
+          setDestSnap(s)
+          destSnapRef.current = s
+          setRoute(null)
+        },
+        triggerRoute,
+      })
+      handler(which, lngLat)
+    },
+    [graph, triggerRoute],
+  )
+
   return {
     mode,
     setMode,
@@ -160,5 +219,6 @@ export function useRouter(
     routeError,
     handleMapClick,
     resetRouting,
+    handleMarkerDrag,
   }
 }
