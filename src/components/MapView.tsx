@@ -10,7 +10,6 @@ import {
   addFrontierLayers,
   addRouteLayers,
   updateRouteLayer,
-  updateMarkersLayer,
   updateSnapIndicatorLayer,
 } from '../lib/mapHelpers'
 
@@ -104,7 +103,7 @@ export function MapView({
     fitRoadBounds(mapRef.current, geojson)
   }, [geojson])
 
-  // React to routing prop changes — updateMarkersLayer removed: draggable DOM markers replace GeoJSON circles
+  // React to routing prop changes
   useEffect(() => {
     const map = mapRef.current
     if (!map || !loadedRef.current) return

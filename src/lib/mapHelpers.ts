@@ -203,16 +203,6 @@ export function updateSnapIndicatorLayer(
 }
 
 /**
- * clearRouteLayers — resets all route-related sources to empty FeatureCollections.
- */
-export function clearRouteLayers(map: maplibregl.Map): void {
-  for (const sourceId of ['route', 'snap-indicator', 'markers']) {
-    const source = map.getSource(sourceId) as GeoJSONSource | undefined
-    source?.setData(EMPTY_FC)
-  }
-}
-
-/**
  * addFrontierLayers — adds visited-nodes and frontier-nodes GeoJSON sources and circle layers.
  * Visited layer is added first so it renders beneath the frontier layer.
  * Call this separately from addRouteLayers — the caller controls layer order.
