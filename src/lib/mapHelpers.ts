@@ -16,16 +16,19 @@ export function addRoadLayer(map: maplibregl.Map): void {
       'line-color': [
         'match',
         ['get', 'highway'],
-        ['motorway', 'trunk'], '#4488ff',
-        ['primary', 'secondary'], '#2255cc',
+        ['motorway', 'trunk', 'motorway_link', 'trunk_link'], '#4488ff',
+        ['primary', 'secondary', 'primary_link', 'secondary_link'], '#2255cc',
         '#1a3d99',
       ],
       'line-width': [
         'match',
         ['get', 'highway'],
         ['motorway', 'trunk'], 4,
+        ['motorway_link', 'trunk_link'], 2.5,
         ['primary'], 2.5,
+        ['primary_link'], 1.8,
         ['secondary', 'tertiary'], 2,
+        ['secondary_link', 'tertiary_link'], 1.5,
         1.2,
       ],
       'line-opacity': 0,
@@ -215,16 +218,17 @@ export function clearRouteLayers(map: maplibregl.Map): void {
  * Call this separately from addRouteLayers — the caller controls layer order.
  */
 export function addFrontierLayers(map: maplibregl.Map): void {
-  // visited nodes: cyan circles, smaller, semi-transparent
-  map.addSource('visited-nodes', { type: 'geojson', data: EMPTY_FC })
+  // visited edges: cyan road lines between explored nodes
+  map.addSource('visited-nodes', { type: 'geojson', data: EMPTY_LINE_FC })
   map.addLayer({
     id: 'visited-nodes-layer',
-    type: 'circle',
+    type: 'line',
     source: 'visited-nodes',
+    layout: { 'line-join': 'round', 'line-cap': 'round' },
     paint: {
-      'circle-radius': 3,
-      'circle-color': '#00bcd4',
-      'circle-opacity': 0.7,
+      'line-color': '#00bcd4',
+      'line-width': 1.5,
+      'line-opacity': 0.7,
     },
   })
 
@@ -243,18 +247,20 @@ export function addFrontierLayers(map: maplibregl.Map): void {
 }
 
 /**
- * updateFrontierLayers — sets visited and frontier node sources to the given coordinate arrays.
+ * updateFrontierLayers — sets visited edge lines and frontier node sources.
+ * visitedEdges: array of [coordA, coordB] pairs for explored road segments.
+ * frontier: array of [lon, lat] coordinates for the current frontier nodes.
  */
 export function updateFrontierLayers(
   map: maplibregl.Map,
-  visited: [number, number][],
+  visitedEdges: [number, number][][],
   frontier: [number, number][],
 ): void {
-  const visitedFC: FeatureCollection<Point> = {
+  const visitedFC: FeatureCollection<LineString> = {
     type: 'FeatureCollection',
-    features: visited.map(coord => ({
+    features: visitedEdges.map(coords => ({
       type: 'Feature',
-      geometry: { type: 'Point', coordinates: coord },
+      geometry: { type: 'LineString', coordinates: coords },
       properties: {},
     })),
   }
