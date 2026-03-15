@@ -32,7 +32,7 @@ export default function App() {
     handleMarkerDrag,
   } = useRouter(workerRef, graph, componentMap)
 
-  const { speed, setSpeed, startAnimation, cancelAnimation, nodesExplored } = useAnimation()
+  const { speed, setSpeed, startAnimation, cancelAnimation, nodesExplored, isPaused, pauseAnimation, resumeAnimation, stepAnimation } = useAnimation()
   const mapRef = useRef<maplibregl.Map | null>(null)
 
   const isLoading = stage !== '' && geojson === null
@@ -106,6 +106,11 @@ export default function App() {
     [cancelAnimation, handleMarkerDrag],
   )
 
+  const handlePlayPause = useCallback(() => {
+    if (isPaused) resumeAnimation()
+    else pauseAnimation()
+  }, [isPaused, pauseAnimation, resumeAnimation])
+
   // Derived stats values
   const totalNodes = route ? filterHistory(route.searchHistory).length : 0
   const distanceKm = route?.found ? route.distance / 1000 : null
@@ -160,6 +165,9 @@ export default function App() {
         onSpeedChange={setSpeed}
         route={route}
         onReload={() => setShowDropZone(true)}
+        isPaused={isPaused}
+        onPlayPause={handlePlayPause}
+        onStep={stepAnimation}
       />
 
       {visibleError && (

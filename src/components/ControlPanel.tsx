@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { RoutingMode } from '../lib/router'
 import { ModeSelector } from './ModeSelector'
 import { SpeedPanel } from './SpeedPanel'
+import { PlaybackControls } from './PlaybackControls'
 
 interface ControlPanelProps {
   // File loading
@@ -15,6 +16,10 @@ interface ControlPanelProps {
   onSpeedChange: (v: number) => void
   route: unknown | null
   onReload: () => void
+  // Playback controls
+  isPaused: boolean
+  onPlayPause: () => void
+  onStep: () => void
 }
 
 const BUNDLED_MAPS = [
@@ -32,6 +37,9 @@ export function ControlPanel({
   onSpeedChange,
   route,
   onReload,
+  isPaused,
+  onPlayPause,
+  onStep,
 }: ControlPanelProps) {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [dragging, setDragging] = useState(false)
@@ -83,7 +91,7 @@ export function ControlPanel({
         padding: '10px 12px',
         overflow: 'hidden',
         transition: 'max-height 0.3s ease',
-        maxHeight: isLoading ? 60 : showDropZone ? 220 : 260,
+        maxHeight: isLoading ? 60 : showDropZone ? 220 : 300,
       }}
     >
       {/* Loading state */}
@@ -173,7 +181,17 @@ export function ControlPanel({
         }}
       >
         <ModeSelector mode={mode} onModeChange={onModeChange} />
-        <SpeedPanel speed={speed} onSpeedChange={onSpeedChange} visible={route !== null} />
+        <div style={{ display: route !== null ? 'flex' : 'none', alignItems: 'center', gap: 8, marginTop: 8 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <SpeedPanel speed={speed} onSpeedChange={onSpeedChange} visible={true} />
+          </div>
+          <PlaybackControls
+            isPaused={isPaused}
+            onPlayPause={onPlayPause}
+            onStep={onStep}
+            disabled={route === null}
+          />
+        </div>
         <button
           onClick={onReload}
           style={{
