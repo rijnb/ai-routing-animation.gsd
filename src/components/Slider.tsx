@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, type CSSProperties } from 'react'
 
 interface SliderProps {
   min: number
@@ -17,11 +17,16 @@ function calcValue(clientX: number, rect: DOMRect, min: number, max: number, ste
   return Math.min(max, Math.max(min, snapped))
 }
 
-export function Slider({ min, max, step, value, onChange, width = 120, ariaLabel }: SliderProps) {
+export function Slider({ min, max, step, value, onChange, width, ariaLabel }: SliderProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const draggingRef = useRef(false)
 
-  const thumbLeft = ((value - min) / (max - min)) * width - 8
+  const ratio = (value - min) / (max - min)
+  // When width is provided use px positioning; otherwise use % for fluid layout
+  const thumbStyle: CSSProperties =
+    width !== undefined
+      ? { left: `${ratio * width - 8}px` }
+      : { left: `calc(${ratio * 100}% - 8px)` }
 
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     if (!trackRef.current) return
@@ -52,7 +57,7 @@ export function Slider({ min, max, step, value, onChange, width = 120, ariaLabel
       aria-valuemax={max}
       aria-valuenow={value}
       aria-label={ariaLabel}
-      style={{ position: 'relative', width: `${width}px`, height: '20px', cursor: 'pointer' }}
+      style={{ position: 'relative', width: width !== undefined ? `${width}px` : '100%', height: '20px', cursor: 'pointer' }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -76,7 +81,7 @@ export function Slider({ min, max, step, value, onChange, width = 120, ariaLabel
           position: 'absolute',
           top: '50%',
           transform: 'translateY(-50%)',
-          left: `${thumbLeft}px`,
+          ...thumbStyle,
           width: '16px',
           height: '16px',
           borderRadius: '50%',
