@@ -68,7 +68,8 @@ export default function App() {
       prevRouteRef.current = route
       if (!route.found) {
         setRoutingError('No route found between these points')
-        return
+        const timer = setTimeout(() => setRoutingError(null), 4000)
+        return () => clearTimeout(timer)
       }
       startAnimation(mapRef.current, route, graph)
     }
