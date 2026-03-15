@@ -22,18 +22,20 @@ export function StatsHud({
       style={{
         position: 'fixed',
         top: '16px',
-        right: '16px',
+        left: '16px',
         zIndex: 500,
+        width: '280px',
         background: '#1a1a2e',
         border: '1px solid #4488ff',
         borderRadius: '4px',
         padding: '10px 16px',
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, auto)',
-        gap: '0 20px',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '0 8px',
         fontFamily: "'Space Grotesk', sans-serif",
         transition: 'opacity 0.3s ease',
         opacity: 1,
+        boxSizing: 'border-box',
       }}
     >
       <div>
