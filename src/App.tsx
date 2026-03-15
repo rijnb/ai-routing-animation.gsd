@@ -2,10 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { MapView } from './components/MapView'
 import { ApiKeyModal } from './components/ApiKeyModal'
 import { SettingsPanel } from './components/SettingsPanel'
-import { DropZone } from './components/DropZone'
+import { ControlPanel } from './components/ControlPanel'
 import { LoadingOverlay } from './components/LoadingOverlay'
-import { ModeSelector } from './components/ModeSelector'
-import { SpeedPanel } from './components/SpeedPanel'
 import { StatsPanel } from './components/StatsPanel'
 import { getApiKey, clearApiKey } from './lib/apiKeyStore'
 import { useOsmLoader } from './hooks/useOsmLoader'
@@ -41,6 +39,9 @@ export default function App() {
 
   // Track raw click point for snap indicator
   const [lastClickPoint, setLastClickPoint] = useState<[number, number] | null>(null)
+
+  // Allows "Load new file" to return to drop zone state even when geojson is loaded
+  const [showDropZone, setShowDropZone] = useState(false)
 
   // Auto-dismiss OSM load error toast after 5 seconds
   const [visibleError, setVisibleError] = useState<string | null>(null)
@@ -141,8 +142,6 @@ export default function App() {
 
       <LoadingOverlay stage={stage} percent={percent} visible={isLoading} />
 
-      {!isLoading && <DropZone onFile={loadFile} disabled={isLoading} />}
-
       <SettingsPanel
         onClear={() => {
           clearApiKey()
@@ -150,22 +149,17 @@ export default function App() {
         }}
       />
 
-      {/* Speed slider + mode buttons grouped at bottom-right */}
-      {geojson && (
-        <div style={{
-          position: 'absolute',
-          bottom: '24px',
-          right: '24px',
-          zIndex: 400,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          alignItems: 'stretch',
-        }}>
-          <SpeedPanel speed={speed} onSpeedChange={setSpeed} visible={route !== null} />
-          <ModeSelector mode={mode} onModeChange={setMode} />
-        </div>
-      )}
+      <ControlPanel
+        onFile={(file) => { loadFile(file); setShowDropZone(false) }}
+        isLoading={isLoading}
+        geojson={showDropZone ? null : geojson}
+        mode={mode}
+        onModeChange={setMode}
+        speed={speed}
+        onSpeedChange={setSpeed}
+        route={route}
+        onReload={() => setShowDropZone(true)}
+      />
 
       {visibleError && (
         <div className="error-toast">{visibleError}</div>
