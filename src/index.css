@@ -1,10 +1,25 @@
+/* Design token system — all color references resolve through these custom properties */
+:root {
+  --color-bg-base: #0a0a0a;
+  --color-bg-panel: #1a1a2e;
+  --color-bg-overlay: rgba(10, 10, 30, 0.85);
+  --color-accent: #4488ff;
+  --color-accent-active: #2255cc;
+  --color-text: #e0e0f0;
+  --color-text-secondary: #aabbff;
+  --color-text-muted: #8899cc;
+  --color-error: #ff4466;
+  --color-border: #2e2e4a;
+  --color-border-subtle: rgba(255, 255, 255, 0.15);
+}
+
 /* Global font — consistent sans-serif across all dialogs, buttons, and inputs */
 body,
 button,
 input,
 select,
 textarea {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
 }
 
 /* Base layout — full viewport, dark background to match TomTom Basic Night */
