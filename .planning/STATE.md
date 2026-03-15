@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: UI Overhaul
 status: planning
-stopped_at: Phase 8 context gathered
-last_updated: "2026-03-15T16:09:30.832Z"
+stopped_at: Completed 08-custom-control-widgets-01-PLAN.md
+last_updated: "2026-03-15T16:20:09.293Z"
 last_activity: 2026-03-15 — Roadmap created for v1.1, Phases 6–9 defined
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 5
+  completed_plans: 4
   percent: 0
 ---
 
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 06-dark-theme-foundation P02 | 166 | 2 tasks | 4 files |
 | Phase 07-unified-control-panel P01 | 8 | 2 tasks | 2 files |
 | Phase 07-unified-control-panel P01 | 45 | 3 tasks | 2 files |
+| Phase 08-custom-control-widgets P01 | 1 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Recent decisions affecting current work:
 - [Phase 07-unified-control-panel]: ControlPanel embeds drop zone UI directly (not via DropZone component) to avoid position:absolute wrapper conflicting with panel flow
 - [Phase 07-unified-control-panel]: showDropZone boolean override in App.tsx allows returning to drop zone state without unmounting geojson data
 - [Phase 07-unified-control-panel]: Panel fixed at 300px width with maxHeight transitions; SpeedPanel slider uses calc() positioning for emoji icons at both ends
+- [Phase 08-custom-control-widgets]: ModeSelector inactive buttons use transparent background (not #1a1a2e) so they merge with panel surface
+- [Phase 08-custom-control-widgets]: Segmented control pattern: flexDirection row + overflow hidden on container, borderRadius 0 on buttons, flex:1 for equal width
 
 ### Pending Todos
 
@@ -83,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T16:09:30.830Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/phases/08-custom-control-widgets/08-CONTEXT.md
+Last session: 2026-03-15T16:20:09.291Z
+Stopped at: Completed 08-custom-control-widgets-01-PLAN.md
+Resume file: None

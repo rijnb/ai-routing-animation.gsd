@@ -19,8 +19,8 @@
 
 ### Controls
 
-- [ ] **CTRL-01**: Mode selector (car/bicycle/pedestrian) uses icon-based toggle buttons, not a dropdown
-- [ ] **CTRL-02**: Speed slider is custom-styled to match the dark theme
+- [x] **CTRL-01**: Mode selector (car/bicycle/pedestrian) uses icon-based toggle buttons, not a dropdown
+- [x] **CTRL-02**: Speed slider is custom-styled to match the dark theme
 - [ ] **CTRL-03**: Animation playback (play/pause/step) styled as media player controls
 
 ### Stats HUD
@@ -50,8 +50,8 @@
 | PANEL-01 | Phase 7 | Complete |
 | PANEL-02 | Phase 7 | Complete |
 | PANEL-03 | Phase 7 | Complete |
-| CTRL-01 | Phase 8 | Pending |
-| CTRL-02 | Phase 8 | Pending |
+| CTRL-01 | Phase 8 | Complete |
+| CTRL-02 | Phase 8 | Complete |
 | CTRL-03 | Phase 8 | Pending |
 | HUD-01 | Phase 9 | Pending |
 | HUD-02 | Phase 9 | Pending |

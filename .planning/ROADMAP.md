@@ -93,5 +93,5 @@ Plans:
 | 5. One-way Streets and Access Restrictions | v1.0 | 2/2 | Complete | 2026-03-14 |
 | 6. Dark Theme Foundation | 2/2 | Complete   | 2026-03-15 | - |
 | 7. Unified Control Panel | 1/1 | Complete   | 2026-03-15 | - |
-| 8. Custom Control Widgets | v1.1 | 0/2 | Not started | - |
+| 8. Custom Control Widgets | 1/2 | In Progress|  | - |
 | 9. Stats HUD Overlay | v1.1 | 0/TBD | Not started | - |
