@@ -1,8 +1,9 @@
 /**
- * ModeSelector.tsx — floating mode selector panel for routing mode selection.
+ * ModeSelector.tsx — horizontal segmented control for routing mode selection.
  *
- * Renders three toggle buttons (car, bicycle, pedestrian). The active mode
- * button has aria-pressed="true". Hidden when `visible` is false.
+ * Renders three icon-only toggle buttons side-by-side across the full panel width.
+ * The active mode button has aria-pressed="true" and a filled accent background.
+ * Hidden when `visible` is false.
  */
 
 import type { RoutingMode } from '../lib/router'
@@ -22,19 +23,21 @@ const MODES: { value: RoutingMode; label: string; icon: string }[] = [
 const styles = {
   container: {
     display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '8px',
+    flexDirection: 'row' as const,
+    gap: 0,
+    borderRadius: 8,
+    overflow: 'hidden',
+    width: '100%',
   },
   buttonBase: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '10px 16px',
+    flex: 1,
+    justifyContent: 'center' as const,
+    padding: '10px 0',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: 0,
     cursor: 'pointer',
-    fontSize: '14px',
-    fontWeight: 500,
+    fontSize: '20px',
     color: '#ffffff',
     transition: 'background-color 0.15s ease',
   },
@@ -42,7 +45,7 @@ const styles = {
     backgroundColor: '#2255cc',
   },
   buttonInactive: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: 'transparent',
   },
 }
 
@@ -55,20 +58,22 @@ export function ModeSelector({
 
   return (
     <div className="mode-selector" style={styles.container}>
-      {MODES.map(({ value, label, icon }) => {
+      {MODES.map(({ value, label, icon }, index) => {
         const isActive = mode === value
+        const isLast = index === MODES.length - 1
         return (
           <button
             key={value}
+            title={label}
             aria-pressed={isActive}
             onClick={() => onModeChange(value)}
             style={{
               ...styles.buttonBase,
               ...(isActive ? styles.buttonActive : styles.buttonInactive),
+              ...(!isLast ? { borderRight: '1px solid rgba(255,255,255,0.1)' } : {}),
             }}
           >
             <span aria-hidden="true">{icon}</span>
-            {label}
           </button>
         )
       })}
