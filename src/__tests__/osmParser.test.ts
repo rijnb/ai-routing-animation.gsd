@@ -42,6 +42,51 @@ describe('parseOsmXml', () => {
     expect(node2![0]).toBeLessThan(10)
   })
 
+  it('parses highway=steps ways (pedestrian-only road type)', () => {
+    const xml = `<?xml version="1.0"?>
+<osm>
+  <node id="1" lat="52.3" lon="4.9"/>
+  <node id="2" lat="52.31" lon="4.91"/>
+  <way id="10">
+    <nd ref="1"/><nd ref="2"/>
+    <tag k="highway" v="steps"/>
+  </way>
+</osm>`
+    const { ways } = parseOsmXml(xml)
+    expect(ways.length).toBe(1)
+    expect(ways[0].tags['highway']).toBe('steps')
+  })
+
+  it('parses highway=track ways (bicycle+pedestrian road type)', () => {
+    const xml = `<?xml version="1.0"?>
+<osm>
+  <node id="1" lat="52.3" lon="4.9"/>
+  <node id="2" lat="52.31" lon="4.91"/>
+  <way id="10">
+    <nd ref="1"/><nd ref="2"/>
+    <tag k="highway" v="track"/>
+  </way>
+</osm>`
+    const { ways } = parseOsmXml(xml)
+    expect(ways.length).toBe(1)
+    expect(ways[0].tags['highway']).toBe('track')
+  })
+
+  it('parses highway=bridleway ways (pedestrian-only road type)', () => {
+    const xml = `<?xml version="1.0"?>
+<osm>
+  <node id="1" lat="52.3" lon="4.9"/>
+  <node id="2" lat="52.31" lon="4.91"/>
+  <way id="10">
+    <nd ref="1"/><nd ref="2"/>
+    <tag k="highway" v="bridleway"/>
+  </way>
+</osm>`
+    const { ways } = parseOsmXml(xml)
+    expect(ways.length).toBe(1)
+    expect(ways[0].tags['highway']).toBe('bridleway')
+  })
+
   it('filters only highway ways from ROAD_TYPES set', () => {
     const xmlWithNonHighway = `<?xml version="1.0"?>
 <osm>

@@ -59,7 +59,7 @@ const HIGHWAY_ACCESS: Record<string, Set<RoutingMode>> = {
   living_street: new Set(['car', 'bicycle', 'pedestrian']),
   pedestrian: new Set(['pedestrian']),
   footway: new Set(['pedestrian']),
-  cycleway: new Set(['bicycle']),
+  cycleway: new Set(['bicycle', 'pedestrian']),
   path: new Set(['bicycle', 'pedestrian']),
   steps: new Set(['pedestrian']),
   track: new Set(['bicycle', 'pedestrian']),
@@ -81,13 +81,28 @@ export function canUseEdge(
   // 1. Construction — block all modes
   if (highway === 'construction' || tags['construction'] === 'yes') return false
 
-  // 2. Highway type access matrix
-  const allowed = HIGHWAY_ACCESS[highway]
-  if (allowed !== undefined && !allowed.has(mode)) return false
-
-  // 3. access=no and mode-specific tag overrides
+  // 2. access=no — blocks all modes regardless of other tags
   const access = tags['access']
   if (access === 'no') return false
+
+  // 3. Positive tag grants — explicit OSM permission overrides the highway matrix.
+  // If a road is tagged foot=yes or foot=designated, pedestrians may use it regardless
+  // of the highway type (e.g. a cycleway with foot=yes is a shared path).
+  // If a road is tagged bicycle=yes or bicycle=designated, cyclists may use it regardless.
+  const foot = tags['foot']
+  const bicycle = tags['bicycle']
+  if (mode === 'pedestrian' && (foot === 'yes' || foot === 'designated')) {
+    // Still enforce foot=no (checked later) — but grant passes the highway matrix.
+    // Fall through to barrier/oneway checks below.
+  } else if (mode === 'bicycle' && (bicycle === 'yes' || bicycle === 'designated')) {
+    // Same: grant passes the highway matrix; fall through to barrier/oneway checks.
+  } else {
+    // 4. Highway type access matrix (only applied when no positive grant)
+    const allowed = HIGHWAY_ACCESS[highway]
+    if (allowed !== undefined && !allowed.has(mode)) return false
+  }
+
+  // 5. Remaining mode-specific tag overrides (negative)
   // Private/restricted access: block motorised vehicle routing.
   // access=private, access=destination, access=permit, access=customers all
   // indicate roads that should not be used as general through-routes by cars.
@@ -98,7 +113,7 @@ export function canUseEdge(
   if (tags['motor_vehicle'] === 'no' && mode === 'car') return false
   if (tags['motorcar'] === 'no' && mode === 'car') return false
 
-  // 4. Barrier check
+  // 6. Barrier check
   const barrier = tags['barrier']
   if (barrier) {
     const blocksAll = barrier === 'wall' || barrier === 'fence' || barrier === 'hedge'
@@ -113,7 +128,7 @@ export function canUseEdge(
     if (blocksCar && mode === 'car') return false
   }
 
-  // 5. Oneway direction check
+  // 7. Oneway direction check
   if (onewayReversed) {
     if (mode === 'car') return false
     if (mode === 'bicycle' && tags['oneway:bicycle'] !== 'no') return false
@@ -121,6 +136,66 @@ export function canUseEdge(
   }
 
   return true
+}
+
+/**
+ * ROAD_COST_FACTOR — mode-specific edge cost multipliers for A* routing.
+ *
+ * Multipliers discourage routing modes from using infrastructure that is
+ * technically accessible but not preferred. A factor of 1.0 means the edge
+ * is ideal for the given mode; higher values make A* prefer other routes.
+ *
+ * Pedestrian: strongly prefers footways / pedestrian streets / paths over
+ *   car-class roads. Car roads are accessible (pedestrians can walk along them)
+ *   but are penalised so that parallel footways are chosen instead.
+ *
+ * Bicycle: moderately prefers cycling infrastructure over car roads.
+ *
+ * Car: flat 1.0 — routing purely by distance.
+ */
+const ROAD_COST_FACTOR: Record<string, Partial<Record<RoutingMode, number>>> = {
+  // Dedicated pedestrian/shared infrastructure — ideal for pedestrians
+  footway:          { pedestrian: 1.0, bicycle: 10.0 },
+  pedestrian:       { pedestrian: 1.0, bicycle: 10.0 },
+  steps:            { pedestrian: 1.2 },
+  bridleway:        { pedestrian: 1.0 },
+  // Shared cycling/pedestrian infrastructure
+  cycleway:         { bicycle: 1.0, pedestrian: 1.2 }, // only reachable by pedestrian if foot=yes
+  path:             { pedestrian: 1.0, bicycle: 1.0 },
+  track:            { pedestrian: 1.0, bicycle: 1.0 },
+  // Low-traffic streets — usable but mildly penalised for pedestrians
+  living_street:    { pedestrian: 1.2, bicycle: 1.0, car: 1.0 },
+  residential:      { pedestrian: 2.0, bicycle: 1.2, car: 1.0 },
+  service:          { pedestrian: 2.0, bicycle: 1.2, car: 1.0 },
+  unclassified:     { pedestrian: 2.5, bicycle: 1.3, car: 1.0 },
+  // Car-class roads — accessible to pedestrians and cyclists but heavily penalised
+  tertiary:         { pedestrian: 3.0, bicycle: 1.5, car: 1.0 },
+  tertiary_link:    { pedestrian: 3.0, bicycle: 1.5, car: 1.0 },
+  secondary:        { pedestrian: 4.0, bicycle: 2.0, car: 1.0 },
+  secondary_link:   { pedestrian: 4.0, bicycle: 2.0, car: 1.0 },
+  primary:          { pedestrian: 5.0, bicycle: 2.5, car: 1.0 },
+  primary_link:     { pedestrian: 5.0, bicycle: 2.5, car: 1.0 },
+  // Motorway/trunk: inaccessible to pedestrians and cyclists (enforced by canUseEdge)
+  motorway:         { car: 1.0 },
+  motorway_link:    { car: 1.0 },
+  trunk:            { car: 1.0 },
+  trunk_link:       { car: 1.0 },
+}
+
+/**
+ * edgeCost — returns the mode-specific effective cost for traversing an edge.
+ * Multiplies haversine distance by a preference factor so A* routes pedestrians
+ * and cyclists through appropriate infrastructure even when car roads are shorter.
+ *
+ * Virtual edges (no highway tag) use raw distance — they are always passable.
+ */
+export function edgeCost(edge: AdjacencyEdge, mode: RoutingMode): number {
+  const highway = edge.tags['highway']
+  if (!highway) return edge.weight // virtual edge
+
+  const factors = ROAD_COST_FACTOR[highway]
+  const factor = factors?.[mode] ?? 1.0
+  return edge.weight * factor
 }
 
 /**
@@ -179,10 +254,16 @@ export function aStar(
         if (coord) path.unshift(coord)
         node = cameFrom.get(node)
       }
+      // Compute physical distance (sum of haversine between consecutive path coords).
+      // gScore uses cost-weighted values for pathfinding; physical distance is separate.
+      let physicalDistance = 0
+      for (let i = 1; i < path.length; i++) {
+        physicalDistance += haversineMeters(path[i - 1], path[i])
+      }
       return {
         path,
         searchHistory,
-        distance: gScore.get(goalId) ?? 0,
+        distance: physicalDistance,
         found: true,
       }
     }
@@ -193,7 +274,7 @@ export function aStar(
     for (const edge of neighbors) {
       if (!canUseEdge(edge, mode)) continue
 
-      const tentativeG = currentG + edge.weight
+      const tentativeG = currentG + edgeCost(edge, mode)
       const neighborG = gScore.get(edge.to) ?? Infinity
 
       if (tentativeG < neighborG) {

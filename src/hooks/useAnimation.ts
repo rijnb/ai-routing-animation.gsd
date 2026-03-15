@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import maplibregl from 'maplibre-gl'
 import { filterHistory, computeFrameParams } from '../lib/animationUtils'
-import { updateFrontierLayers, updateRouteLayer, clearFrontierLayers, clearFrontierDots } from '../lib/mapHelpers'
+import { updateFrontierLayers, updateRouteLayer, clearFrontierDots } from '../lib/mapHelpers'
 import type { RouteResult } from '../lib/router'
 import type { OsmGraph } from '../lib/osmParser'
 

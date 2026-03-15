@@ -21,6 +21,9 @@ const ROAD_TYPES = new Set([
   'footway',
   'cycleway',
   'path',
+  'steps',
+  'track',
+  'bridleway',
 ])
 
 export interface OsmWay {
