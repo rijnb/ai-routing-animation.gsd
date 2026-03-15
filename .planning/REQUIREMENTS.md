@@ -14,7 +14,7 @@
 ### Theme
 
 - [ ] **THEME-01**: App has a consistent dark color scheme (dark backgrounds, light text, accent colors)
-- [ ] **THEME-02**: Typography uses a monospace or technical typeface for labels and data
+- [ ] **THEME-02**: Typography uses a distinctive sans-serif typeface (not Arial/system defaults) for labels and data
 - [ ] **THEME-03**: All browser-default form elements are replaced with custom-styled versions
 
 ### Controls
@@ -42,28 +42,26 @@
 
 ## Traceability
 
-*(Populated during roadmap creation)*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PANEL-01 | — | Pending |
-| PANEL-02 | — | Pending |
-| PANEL-03 | — | Pending |
-| THEME-01 | — | Pending |
-| THEME-02 | — | Pending |
-| THEME-03 | — | Pending |
-| CTRL-01 | — | Pending |
-| CTRL-02 | — | Pending |
-| CTRL-03 | — | Pending |
-| HUD-01 | — | Pending |
-| HUD-02 | — | Pending |
-| HUD-03 | — | Pending |
+| THEME-01 | Phase 6 | Pending |
+| THEME-02 | Phase 6 | Pending |
+| THEME-03 | Phase 6 | Pending |
+| PANEL-01 | Phase 7 | Pending |
+| PANEL-02 | Phase 7 | Pending |
+| PANEL-03 | Phase 7 | Pending |
+| CTRL-01 | Phase 8 | Pending |
+| CTRL-02 | Phase 8 | Pending |
+| CTRL-03 | Phase 8 | Pending |
+| HUD-01 | Phase 9 | Pending |
+| HUD-02 | Phase 9 | Pending |
+| HUD-03 | Phase 9 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 12 total
-- Mapped to phases: 0
-- Unmapped: 12 ⚠️
+- Mapped to phases: 12
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-15*
-*Last updated: 2026-03-15 after initial definition*
+*Last updated: 2026-03-15 after roadmap creation*
