@@ -68,8 +68,6 @@ export function ControlPanel({
     onFile(file)
   }
 
-  const maxHeight = showDropZone ? 260 : 180
-
   return (
     <div
       style={{
@@ -84,8 +82,8 @@ export function ControlPanel({
         borderRadius: 4,
         padding: '10px 12px',
         overflow: 'hidden',
-        maxHeight,
         transition: 'max-height 0.3s ease',
+        maxHeight: isLoading ? 60 : showDropZone ? 220 : 260,
       }}
     >
       {/* Loading state */}
@@ -101,6 +99,8 @@ export function ControlPanel({
           opacity: showDropZone ? 1 : 0,
           transition: 'opacity 0.25s ease',
           pointerEvents: showDropZone ? 'auto' : 'none',
+          height: showDropZone ? 'auto' : 0,
+          overflow: 'hidden',
         }}
       >
         <div
@@ -168,6 +168,8 @@ export function ControlPanel({
           opacity: showRouting ? 1 : 0,
           transition: 'opacity 0.25s ease',
           pointerEvents: showRouting ? 'auto' : 'none',
+          height: showRouting ? 'auto' : 0,
+          overflow: 'hidden',
         }}
       >
         <ModeSelector mode={mode} onModeChange={onModeChange} />
