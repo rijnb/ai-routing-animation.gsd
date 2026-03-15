@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: UI Overhaul
 status: planning
-stopped_at: "Checkpoint: 07-01 Task 3 visual verification"
-last_updated: "2026-03-15T15:40:33.606Z"
+stopped_at: Completed 07-unified-control-panel-01-PLAN.md
+last_updated: "2026-03-15T15:52:41.051Z"
 last_activity: 2026-03-15 — Roadmap created for v1.1, Phases 6–9 defined
 progress:
   total_phases: 4
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 06-dark-theme-foundation P01 | 2 | 2 tasks | 3 files |
 | Phase 06-dark-theme-foundation P02 | 166 | 2 tasks | 4 files |
 | Phase 07-unified-control-panel P01 | 8 | 2 tasks | 2 files |
+| Phase 07-unified-control-panel P01 | 45 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,9 @@ Recent decisions affecting current work:
 - [Phase 06-dark-theme-foundation]: setPointerCapture wrapped in try/catch for jsdom test environment compatibility
 - [Phase 06-dark-theme-foundation]: src/components/__tests__ excluded from tsconfig.app.json to prevent test types leaking into production build
 - [Phase 07-unified-control-panel]: ControlPanel embeds drop zone UI directly to avoid position:absolute conflicts; showDropZone override preserves geojson on reload
+- [Phase 07-unified-control-panel]: ControlPanel embeds drop zone UI directly (not via DropZone component) to avoid position:absolute wrapper conflicting with panel flow
+- [Phase 07-unified-control-panel]: showDropZone boolean override in App.tsx allows returning to drop zone state without unmounting geojson data
+- [Phase 07-unified-control-panel]: Panel fixed at 300px width with maxHeight transitions; SpeedPanel slider uses calc() positioning for emoji icons at both ends
 
 ### Pending Todos
 
@@ -79,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T15:40:33.604Z
-Stopped at: Checkpoint: 07-01 Task 3 visual verification
+Last session: 2026-03-15T15:52:41.046Z
+Stopped at: Completed 07-unified-control-panel-01-PLAN.md
 Resume file: None
