@@ -80,6 +80,7 @@ Recent decisions affecting current work:
 - [Phase 08-custom-control-widgets]: isPausedRef and stepRef at hook level so frame() closure captures stable ref objects across re-renders
 - [Phase 08-custom-control-widgets]: Pause gate keeps rAF loop alive (re-schedules every tick while paused) — no need to cancel/restart rAF on pause/resume
 - [Phase 09-stats-hud-overlay]: StatsHud placed top-left (not top-right) to avoid overlap with SettingsPanel gear button; fixed 280px width with repeat(3,1fr) grid prevents layout shift
+- [Phase 09-stats-hud-overlay hotfix]: Widened StatsHud from 280px to 380px; added whiteSpace:nowrap on NODE value cell — prevents vertical growth when node counts exceed 10K (e.g. "12,345 / 67,890")
 
 ### Pending Todos
 
