@@ -80,7 +80,10 @@ Plans:
   1. Distance, travel time, and nodes explored are displayed in a separate overlay element positioned independently from the control panel
   2. The HUD visual style reads as a sci-fi or terminal data display — not generic card or tooltip styling
   3. The HUD is invisible before a route is calculated and becomes visible only once a route is active
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 09-01-PLAN.md — StatsHud component: sci-fi 3-column instrument readout (HUD-01, HUD-02, HUD-03)
 
 ## Progress
 
@@ -94,4 +97,4 @@ Plans:
 | 6. Dark Theme Foundation | 2/2 | Complete   | 2026-03-15 | - |
 | 7. Unified Control Panel | 1/1 | Complete   | 2026-03-15 | - |
 | 8. Custom Control Widgets | 2/2 | Complete    | 2026-03-15 | - |
-| 9. Stats HUD Overlay | v1.1 | 0/TBD | Not started | - |
+| 9. Stats HUD Overlay | v1.1 | 0/1 | Not started | - |
