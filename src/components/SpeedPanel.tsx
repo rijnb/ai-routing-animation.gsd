@@ -1,3 +1,5 @@
+import { Slider } from './Slider'
+
 interface SpeedPanelProps {
   speed: number           // 0.5 to 5.0
   onSpeedChange: (v: number) => void
@@ -20,16 +22,7 @@ export function SpeedPanel({ speed, onSpeedChange, visible }: SpeedPanelProps) {
     }}>
       <span aria-hidden="true">🐢</span>
       <span>Speed</span>
-      <input
-        type="range"
-        min={0.5}
-        max={5}
-        step={0.5}
-        value={speed}
-        onChange={e => onSpeedChange(parseFloat(e.target.value))}
-        style={{ width: '120px' }}
-        aria-label="Animation speed"
-      />
+      <Slider min={0.5} max={5} step={0.5} value={speed} onChange={onSpeedChange} ariaLabel="Animation speed" />
     </div>
   )
 }

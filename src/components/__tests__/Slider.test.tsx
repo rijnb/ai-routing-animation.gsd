@@ -1,6 +1,7 @@
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { Slider } from '../Slider'
 
 describe('Slider', () => {
