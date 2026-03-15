@@ -7,9 +7,9 @@
 
 ### Control Panel
 
-- [ ] **PANEL-01**: User sees all controls in a single floating dark-themed panel (drop zone, mode selector, speed, playback)
-- [ ] **PANEL-02**: Panel adapts when a file is loaded (drop zone collapses, routing controls appear)
-- [ ] **PANEL-03**: Panel has a fixed, visually intentional position over the map
+- [x] **PANEL-01**: User sees all controls in a single floating dark-themed panel (drop zone, mode selector, speed, playback)
+- [x] **PANEL-02**: Panel adapts when a file is loaded (drop zone collapses, routing controls appear)
+- [x] **PANEL-03**: Panel has a fixed, visually intentional position over the map
 
 ### Theme
 
@@ -47,9 +47,9 @@
 | THEME-01 | Phase 6 | Complete |
 | THEME-02 | Phase 6 | Complete |
 | THEME-03 | Phase 6 | Complete |
-| PANEL-01 | Phase 7 | Pending |
-| PANEL-02 | Phase 7 | Pending |
-| PANEL-03 | Phase 7 | Pending |
+| PANEL-01 | Phase 7 | Complete |
+| PANEL-02 | Phase 7 | Complete |
+| PANEL-03 | Phase 7 | Complete |
 | CTRL-01 | Phase 8 | Pending |
 | CTRL-02 | Phase 8 | Pending |
 | CTRL-03 | Phase 8 | Pending |
