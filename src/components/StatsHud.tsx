@@ -24,7 +24,7 @@ export function StatsHud({
         top: '16px',
         left: '16px',
         zIndex: 500,
-        width: '280px',
+        width: '380px',
         background: '#1a1a2e',
         border: '1px solid #4488ff',
         borderRadius: '4px',
@@ -87,7 +87,7 @@ export function StatsHud({
         >
           NODE
         </div>
-        <div style={{ color: '#e0e0f0', fontSize: '14px', fontWeight: 700 }}>
+        <div style={{ color: '#e0e0f0', fontSize: '14px', fontWeight: 700, whiteSpace: 'nowrap' }}>
           {nodesExplored.toLocaleString()} / {totalNodes.toLocaleString()}
         </div>
       </div>
