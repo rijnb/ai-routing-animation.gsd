@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A TypeScript browser application for visualizing graph-based pathfinding on real map data. Users upload a gzipped OSM file, click two points on the rendered map, select a routing mode (car, bicycle, or pedestrian), and watch A* search the road network — the search frontier expands node-by-node while the optimal path (pre-calculated) is always shown in red. One-way streets, access restrictions, barriers, and construction zones are fully respected per transport mode.
+A TypeScript browser application for visualizing graph-based pathfinding on real map data. Users upload a gzipped OSM file, click two points on the rendered map, select a routing mode (car, bicycle, or pedestrian), and watch A* search the road network — the search frontier expands node-by-node while the optimal path (pre-calculated) is always shown in red. The UI is a polished dark/techy portfolio piece: a unified floating control panel, a sci-fi HUD overlay for route stats, and custom-styled controls throughout. One-way streets, access restrictions, barriers, and construction zones are fully respected per transport mode.
 
 ## Core Value
 
@@ -16,17 +16,18 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 - ✓ User can click two points on the map to set source and destination — v1.0
 - ✓ User can select routing mode: car, bicycle, or pedestrian — v1.0
 - ✓ User sees the A* search frontier animate node-by-node across the graph — v1.0
-- ✓ The optimal path (pre-calculated) is always shown in red as the search grows toward it — v1.0 (full path shown from frame 0, intentional for visibility)
+- ✓ The optimal path (pre-calculated) is always shown in red as the search grows toward it — v1.0
 - ✓ Different routing modes produce visibly different routes (road type and access constraints) — v1.0
 - ✓ Animation speed is controllable (pause, step, fast-forward) — v1.0
+- ✓ Unified dark-themed floating control panel (drop zone, mode selector, speed slider, animation controls) — v1.1
+- ✓ Futuristic stats HUD overlay (distance, travel time, nodes explored — technical readout style) — v1.1
+- ✓ Custom-styled mode selector (car/bicycle/pedestrian icon toggle) — v1.1
+- ✓ Custom-styled speed slider and animation controls (play/pause/step as media player) — v1.1
+- ✓ Consistent dark/techy visual theme across all UI elements — v1.1
 
 ### Active
 
-- [ ] Unified dark-themed floating control panel (drop zone, mode selector, speed slider, animation controls)
-- [ ] Futuristic stats HUD overlay (distance, travel time, nodes explored — technical readout style)
-- [ ] Custom-styled mode selector (car/bicycle/pedestrian icon toggle)
-- [ ] Custom-styled speed slider and animation controls (play/pause/step as media player)
-- [ ] Consistent dark/techy visual theme across all UI elements
+*(None — planning next milestone)*
 
 ### Out of Scope
 
@@ -35,14 +36,16 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 - Turn-by-turn directions or navigation UI — visual demo, not GPS
 - Mobile app or touch-first UI — desktop browser demo
 - Multi-stop routing — single source-to-destination only
+- Dark/light theme toggle — dark-only is the target aesthetic
 
 ## Context
 
-- Shipped v1.0 with ~3,900 lines TypeScript/TSX. Tech stack: Vite 8, React 19, TypeScript, MapLibre GL JS, Vitest, fflate (in-browser gzip).
+- Shipped v1.1 with ~4,770 lines TypeScript/TSX. Tech stack: Vite 8, React 19, TypeScript, MapLibre GL JS, Vitest, fflate.
 - OSM parsing runs in a Web Worker to keep UI responsive on large files.
 - A* pre-calculates the full path, then replays the search frontier animation synchronized with the growing red path line.
-- 152 tests passing covering routing logic, animation utilities, and stats calculations.
-- Known tech debt: several visual/interactive behaviors (snap indicator, overlay fade-in, animation experience) require browser confirmation only; dead import (`updateMarkersLayer`) and orphaned export (`formatDistance`) remain in codebase.
+- 152+ tests passing covering routing logic, animation utilities, and stats calculations.
+- UI corner assignment: top-left=StatsHud, top-right=SettingsPanel, bottom-right=ControlPanel.
+- Known tech debt: CSS `--color-*` tokens defined but not consumed by Phase 7/8/9 components (hardcoded hex literals used instead); `StatsPanel.tsx` is dead code retained as reference.
 
 ## Constraints
 
@@ -63,15 +66,13 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 | Union-find for disconnected component detection | Catch unreachable source/destination early before A* runs | ✓ Good — fast pre-check |
 | Frame-skip mechanism for slow animation | Linear nodesPerFrame formula bottlenecked at 1 node/frame; frame-skip allows sub-1 effective rate | ✓ Good — 10x slower min speed achieved |
 | Guard animation start on route.found | A* returns found=false with full searchHistory; was triggering silent exhaustive animation | ✓ Good — fixed, shows error toast immediately |
-
-## Current Milestone: v1.1 UI Overhaul
-
-**Goal:** Redesign the UI into a polished dark/techy portfolio piece — unified control panel, futuristic stats HUD, and consistent visual theme.
-
-**Target features:**
-- Unified floating control panel (drop zone + mode selector + speed + playback controls)
-- Futuristic stats HUD (distance, time, nodes — styled as technical data readout)
-- Dark/techy visual theme and consistent component styling
+| ControlPanel embeds drop zone UI directly | Reusing DropZone component caused position:absolute wrapper conflicts inside the panel flow | ✓ Good — clean fixed-width panel, no layout conflicts |
+| showDropZone override in App.tsx | Allows returning to drop zone state without unmounting geojson — preserves loaded data on "Load new file" | ✓ Good — seamless UX |
+| Panel fixed 300px width + maxHeight transitions | Dynamic widths caused reflow when slider rendered; fixed width + CSS transitions gives smooth state changes | ✓ Good — stable, smooth transitions |
+| isPausedRef + stepRef at hook level | Refs inside startAnimation closure lose stability across re-renders; hook-level refs captured once | ✓ Good — pause gate keeps rAF loop alive, no cancel/restart needed |
+| StatsHud placed top-left | SettingsPanel gear at top:12 right:12 claimed the top-right corner; moved HUD to top-left for clear separation | ✓ Good — diagonal corner separation (top-left HUD, top-right settings, bottom-right controls) |
+| StatsHud width 380px with repeat(3,1fr) grid | repeat(3,auto) resized to content — NODE counter caused layout shift at 10K+ nodes | ✓ Good — stable fixed-width instrument readout |
+| CSS tokens defined but components use hardcoded hex | Phase 7/8/9 components were built with inline styles matching token values but not referencing them | ⚠ Revisit — token system is an island; future theme changes require dual updates |
 
 ---
-*Last updated: 2026-03-15 after v1.1 milestone start*
+*Last updated: 2026-03-15 after v1.1 milestone*
