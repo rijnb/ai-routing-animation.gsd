@@ -66,7 +66,11 @@ Plans:
   1. The mode selector shows distinct icon buttons for car, bicycle, and pedestrian — tapping one visually highlights the active mode; no dropdown is present
   2. The speed slider is custom-styled (track, thumb, and fill all match the dark theme) with no browser-default appearance
   3. Play, pause, and step controls are styled as media player buttons — recognizable transport icons, consistent with the dark theme
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — ModeSelector horizontal icon strip + SpeedPanel flush restyle (CTRL-01, CTRL-02)
+- [ ] 08-02-PLAN.md — PlaybackControls component + useAnimation pause/resume/step (CTRL-03)
 
 ### Phase 9: Stats HUD Overlay
 **Goal**: Users see route statistics presented as a futuristic technical readout, only when relevant
@@ -89,5 +93,5 @@ Plans:
 | 5. One-way Streets and Access Restrictions | v1.0 | 2/2 | Complete | 2026-03-14 |
 | 6. Dark Theme Foundation | 2/2 | Complete   | 2026-03-15 | - |
 | 7. Unified Control Panel | 1/1 | Complete   | 2026-03-15 | - |
-| 8. Custom Control Widgets | v1.1 | 0/TBD | Not started | - |
+| 8. Custom Control Widgets | v1.1 | 0/2 | Not started | - |
 | 9. Stats HUD Overlay | v1.1 | 0/TBD | Not started | - |
