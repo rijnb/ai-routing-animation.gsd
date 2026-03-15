@@ -22,7 +22,11 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 
 ### Active
 
-(None — define for next milestone)
+- [ ] Unified dark-themed floating control panel (drop zone, mode selector, speed slider, animation controls)
+- [ ] Futuristic stats HUD overlay (distance, travel time, nodes explored — technical readout style)
+- [ ] Custom-styled mode selector (car/bicycle/pedestrian icon toggle)
+- [ ] Custom-styled speed slider and animation controls (play/pause/step as media player)
+- [ ] Consistent dark/techy visual theme across all UI elements
 
 ### Out of Scope
 
@@ -60,5 +64,14 @@ A visually impressive, interactive A* pathfinding animation on real OpenStreetMa
 | Frame-skip mechanism for slow animation | Linear nodesPerFrame formula bottlenecked at 1 node/frame; frame-skip allows sub-1 effective rate | ✓ Good — 10x slower min speed achieved |
 | Guard animation start on route.found | A* returns found=false with full searchHistory; was triggering silent exhaustive animation | ✓ Good — fixed, shows error toast immediately |
 
+## Current Milestone: v1.1 UI Overhaul
+
+**Goal:** Redesign the UI into a polished dark/techy portfolio piece — unified control panel, futuristic stats HUD, and consistent visual theme.
+
+**Target features:**
+- Unified floating control panel (drop zone + mode selector + speed + playback controls)
+- Futuristic stats HUD (distance, time, nodes — styled as technical data readout)
+- Dark/techy visual theme and consistent component styling
+
 ---
-*Last updated: 2026-03-14 after v1.0 milestone*
+*Last updated: 2026-03-15 after v1.1 milestone start*

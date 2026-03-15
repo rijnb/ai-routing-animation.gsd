@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: MVP
-status: milestone_complete
-stopped_at: v1.0 milestone archived
-last_updated: "2026-03-14T00:00:00.000Z"
-last_activity: "2026-03-14 - Completed v1.0 milestone — 5 phases, 15 plans"
+milestone: v1.1
+milestone_name: UI Overhaul
+status: defining_requirements
+stopped_at: ~
+last_updated: "2026-03-15T00:00:00.000Z"
+last_activity: "2026-03-15 - Milestone v1.1 started"
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 15
-  completed_plans: 15
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
   percent: 0
 ---
 
@@ -18,16 +18,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-14)
+See: .planning/PROJECT.md (updated 2026-03-15)
 
 **Core value:** A visually impressive A* pathfinding animation on real OpenStreetMap data with mode-aware routing — portfolio-grade algorithm visualization
-**Current focus:** Planning next milestone — run `/gsd:new-milestone`
+**Current focus:** Defining requirements for v1.1 UI Overhaul
 
 ## Current Position
 
-Phase: 1 of 4 (Data Pipeline and Map Foundation)
-Plan: 0 of 3 in current phase
-Status: Ready to plan
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-15 — Milestone v1.1 started
 Last activity: 2026-03-14 - Completed quick task 1: Write a README.md at the top-level directory of the project
 
 Progress: [░░░░░░░░░░] 0%
