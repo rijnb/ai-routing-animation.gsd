@@ -39,7 +39,11 @@ See `.planning/milestones/v1.0-ROADMAP.md` for full phase details.
   1. The app background, panels, and overlays all use a dark color palette with light text and accent colors — no light or unstyled surfaces visible
   2. All labels, values, and UI text render in a distinctive sans-serif typeface (not Arial or system defaults)
   3. No browser-default form elements (dropdowns, checkboxes, range inputs, buttons) are visible anywhere in the app
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Color token system and Space Grotesk typography (THEME-01, THEME-02)
+- [ ] 06-02-PLAN.md — Custom Slider component replacing native range input (THEME-03)
 
 ### Phase 7: Unified Control Panel
 **Goal**: Users interact with all controls through a single, purposefully placed floating panel
@@ -80,7 +84,7 @@ See `.planning/milestones/v1.0-ROADMAP.md` for full phase details.
 | 3. Search Animation | v1.0 | 3/3 | Complete | 2026-03-13 |
 | 4. Stats and Marker Interaction | v1.0 | 3/3 | Complete | 2026-03-14 |
 | 5. One-way Streets and Access Restrictions | v1.0 | 2/2 | Complete | 2026-03-14 |
-| 6. Dark Theme Foundation | v1.1 | 0/TBD | Not started | - |
+| 6. Dark Theme Foundation | v1.1 | 0/2 | Not started | - |
 | 7. Unified Control Panel | v1.1 | 0/TBD | Not started | - |
 | 8. Custom Control Widgets | v1.1 | 0/TBD | Not started | - |
 | 9. Stats HUD Overlay | v1.1 | 0/TBD | Not started | - |
