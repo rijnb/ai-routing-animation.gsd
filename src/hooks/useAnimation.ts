@@ -11,27 +11,54 @@ export function useAnimation(): {
   startAnimation: (map: maplibregl.Map, route: RouteResult, graph: OsmGraph) => void
   cancelAnimation: () => void
   nodesExplored: number
+  isPaused: boolean
+  pauseAnimation: () => void
+  resumeAnimation: () => void
+  stepAnimation: () => void
 } {
   const [speed, setSpeed] = useState<number>(1.0)
   const [nodesExplored, setNodesExplored] = useState<number>(0)
+  const [isPaused, setIsPaused] = useState<boolean>(false)
   const speedRef = useRef<number>(1.0)
   const rafHandleRef = useRef<number | null>(null)
+  const isPausedRef = useRef<boolean>(false)
+  const stepRef = useRef<boolean>(false)
 
   // Keep speedRef in sync with speed state so in-flight frames pick up slider changes
   useEffect(() => {
     speedRef.current = speed
   }, [speed])
 
+  const pauseAnimation = useCallback(() => {
+    isPausedRef.current = true
+    setIsPaused(true)
+  }, [])
+
+  const resumeAnimation = useCallback(() => {
+    isPausedRef.current = false
+    setIsPaused(false)
+  }, [])
+
+  const stepAnimation = useCallback(() => {
+    stepRef.current = true
+  }, [])
+
   const cancelAnimation = useCallback(() => {
     if (rafHandleRef.current !== null) {
       cancelAnimationFrame(rafHandleRef.current)
       rafHandleRef.current = null
     }
+    isPausedRef.current = false
+    stepRef.current = false
+    setIsPaused(false)
   }, [])
 
   const startAnimation = useCallback(
     (map: maplibregl.Map, route: RouteResult, graph: OsmGraph) => {
       cancelAnimation()
+      isPausedRef.current = false
+      stepRef.current = false
+      setIsPaused(false)
 
       const history = filterHistory(route.searchHistory)
       const total = history.length
@@ -63,6 +90,12 @@ export function useAnimation(): {
       const seenEdges = new Set<string>()
 
       function frame() {
+        if (isPausedRef.current && !stepRef.current) {
+          rafHandleRef.current = requestAnimationFrame(frame)
+          return
+        }
+        stepRef.current = false
+
         const { nodesPerFrame, frameSkip } = computeFrameParams(speedRef.current)
 
         // Frame-skipping: only advance the cursor every `frameSkip` RAF ticks.
@@ -118,5 +151,5 @@ export function useAnimation(): {
     [cancelAnimation],
   )
 
-  return { speed, setSpeed, startAnimation, cancelAnimation, nodesExplored }
+  return { speed, setSpeed, startAnimation, cancelAnimation, nodesExplored, isPaused, pauseAnimation, resumeAnimation, stepAnimation }
 }
