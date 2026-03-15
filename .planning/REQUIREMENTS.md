@@ -25,9 +25,9 @@
 
 ### Stats HUD
 
-- [ ] **HUD-01**: Stats (distance, travel time, nodes explored) displayed in a separate HUD overlay
-- [ ] **HUD-02**: HUD uses a futuristic/technical visual style (terminal readout or sci-fi data display)
-- [ ] **HUD-03**: HUD only appears when a route is active
+- [x] **HUD-01**: Stats (distance, travel time, nodes explored) displayed in a separate HUD overlay
+- [x] **HUD-02**: HUD uses a futuristic/technical visual style (terminal readout or sci-fi data display)
+- [x] **HUD-03**: HUD only appears when a route is active
 
 ## Future Requirements
 
@@ -53,9 +53,9 @@
 | CTRL-01 | Phase 8 | Complete |
 | CTRL-02 | Phase 8 | Complete |
 | CTRL-03 | Phase 8 | Complete |
-| HUD-01 | Phase 9 | Pending |
-| HUD-02 | Phase 9 | Pending |
-| HUD-03 | Phase 9 | Pending |
+| HUD-01 | Phase 9 | Complete |
+| HUD-02 | Phase 9 | Complete |
+| HUD-03 | Phase 9 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 12 total

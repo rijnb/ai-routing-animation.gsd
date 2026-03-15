@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: UI Overhaul
 status: planning
-stopped_at: Phase 9 context gathered
-last_updated: "2026-03-15T16:44:22.661Z"
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-03-15T16:59:00.998Z"
 last_activity: 2026-03-15 — Roadmap created for v1.1, Phases 6–9 defined
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
+  completed_phases: 4
+  total_plans: 6
+  completed_plans: 6
   percent: 0
 ---
 
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 07-unified-control-panel P01 | 45 | 3 tasks | 2 files |
 | Phase 08-custom-control-widgets P01 | 1 | 2 tasks | 2 files |
 | Phase 08-custom-control-widgets P02 | 2 | 2 tasks | 4 files |
+| Phase 09-stats-hud-overlay P01 | 15 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,7 @@ Recent decisions affecting current work:
 - [Phase 08-custom-control-widgets]: Segmented control pattern: flexDirection row + overflow hidden on container, borderRadius 0 on buttons, flex:1 for equal width
 - [Phase 08-custom-control-widgets]: isPausedRef and stepRef at hook level so frame() closure captures stable ref objects across re-renders
 - [Phase 08-custom-control-widgets]: Pause gate keeps rAF loop alive (re-schedules every tick while paused) — no need to cancel/restart rAF on pause/resume
+- [Phase 09-stats-hud-overlay]: StatsHud placed top-left (not top-right) to avoid overlap with SettingsPanel gear button; fixed 280px width with repeat(3,1fr) grid prevents layout shift
 
 ### Pending Todos
 
@@ -89,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T16:44:22.658Z
-Stopped at: Phase 9 context gathered
-Resume file: .planning/phases/09-stats-hud-overlay/09-CONTEXT.md
+Last session: 2026-03-15T16:59:00.996Z
+Stopped at: Completed 09-01-PLAN.md
+Resume file: None

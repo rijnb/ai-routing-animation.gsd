@@ -27,7 +27,7 @@ See `.planning/milestones/v1.0-ROADMAP.md` for full phase details.
 - [x] **Phase 6: Dark Theme Foundation** — Establish the visual design system: dark color scheme, distinctive sans-serif typography, and custom-styled form elements replacing all browser defaults (completed 2026-03-15)
 - [x] **Phase 7: Unified Control Panel** — Assemble all controls into a single floating dark-themed panel with adaptive state and intentional fixed positioning (completed 2026-03-15)
 - [x] **Phase 8: Custom Control Widgets** — Replace each individual control with bespoke styled versions: icon-based mode toggle, custom speed slider, media-player playback buttons (completed 2026-03-15)
-- [ ] **Phase 9: Stats HUD Overlay** — Build the futuristic technical-readout HUD that displays route stats and only appears when a route is active
+- [x] **Phase 9: Stats HUD Overlay** — Build the futuristic technical-readout HUD that displays route stats and only appears when a route is active (completed 2026-03-15)
 
 ## Phase Details
 
@@ -97,4 +97,4 @@ Plans:
 | 6. Dark Theme Foundation | 2/2 | Complete   | 2026-03-15 | - |
 | 7. Unified Control Panel | 1/1 | Complete   | 2026-03-15 | - |
 | 8. Custom Control Widgets | 2/2 | Complete    | 2026-03-15 | - |
-| 9. Stats HUD Overlay | v1.1 | 0/1 | Not started | - |
+| 9. Stats HUD Overlay | 1/1 | Complete   | 2026-03-15 | - |
