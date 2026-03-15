@@ -4,7 +4,7 @@ import { ApiKeyModal } from './components/ApiKeyModal'
 import { SettingsPanel } from './components/SettingsPanel'
 import { ControlPanel } from './components/ControlPanel'
 import { LoadingOverlay } from './components/LoadingOverlay'
-import { StatsPanel } from './components/StatsPanel'
+import { StatsHud } from './components/StatsHud'
 import { getApiKey, clearApiKey } from './lib/apiKeyStore'
 import { useOsmLoader } from './hooks/useOsmLoader'
 import { useRouter } from './hooks/useRouter'
@@ -137,7 +137,7 @@ export default function App() {
           graph={graph}
           onMapReady={m => { mapRef.current = m }}
         />
-        <StatsPanel
+        <StatsHud
           nodesExplored={nodesExplored}
           totalNodes={totalNodes}
           distanceKm={distanceKm}
