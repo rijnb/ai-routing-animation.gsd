@@ -53,7 +53,10 @@ Plans:
   1. Drop zone, mode selector, speed slider, and playback controls all appear together in one dark-themed floating panel — not scattered across the page
   2. When a file is loaded, the drop zone collapses and routing controls (mode, speed, playback) become visible in its place
   3. The panel stays in a fixed, visually intentional position over the map regardless of map pan or zoom
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 07-01-PLAN.md — Unified ControlPanel component: drop zone + routing controls in one fixed panel
 
 ### Phase 8: Custom Control Widgets
 **Goal**: Users operate bespoke styled controls that match the dark/techy aesthetic
