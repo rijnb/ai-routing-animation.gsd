@@ -4,7 +4,7 @@ milestone: v1.1
 milestone_name: UI Overhaul
 status: planning
 stopped_at: Completed 08-custom-control-widgets-02-PLAN.md
-last_updated: "2026-03-15T16:24:05.957Z"
+last_updated: "2026-03-15T16:26:48.623Z"
 last_activity: 2026-03-15 — Roadmap created for v1.1, Phases 6–9 defined
 progress:
   total_phases: 4
