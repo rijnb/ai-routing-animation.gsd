@@ -1,95 +1,69 @@
 # Requirements: OSM Routing Animator
 
-**Defined:** 2026-03-12
-**Core Value:** A visually impressive A* pathfinding animation on real OpenStreetMap data with mode-aware routing — portfolio-grade algorithm visualization
+**Defined:** 2026-03-15
+**Core Value:** A visually impressive, interactive A* pathfinding animation on real OpenStreetMap data with mode-aware routing — a portfolio-grade algorithm visualization demo.
 
-## v1 Requirements
+## v1.1 Requirements
 
-### Data Pipeline
+### Control Panel
 
-- [x] **PIPE-01**: User can upload a .osm.gz file via file picker or drag-and-drop
-- [x] **PIPE-02**: Browser decompresses and parses the OSM XML in a Web Worker (UI remains responsive during loading)
-- [x] **PIPE-03**: Graph builder detects disconnected components and warns user if selected source/destination cannot be connected
-- [x] **PIPE-04**: Parsed road network is rendered as a visible overlay layer on the MapLibre base map
+- [ ] **PANEL-01**: User sees all controls in a single floating dark-themed panel (drop zone, mode selector, speed, playback)
+- [ ] **PANEL-02**: Panel adapts when a file is loaded (drop zone collapses, routing controls appear)
+- [ ] **PANEL-03**: Panel has a fixed, visually intentional position over the map
 
-### Map Interaction
+### Theme
 
-- [x] **MAP-01**: User can click the map to set a source point — snaps to the nearest road segment suitable for the selected routing mode within 200m, at the interpolated point on that segment
-- [x] **MAP-02**: User can click the map to set a destination point — snaps to the nearest suitable road segment within 200m, at the interpolated point on that segment
-- [x] **MAP-03**: User can pan and zoom the map at any time, including during animation
-- [x] **MAP-04**: User can drag the source or destination marker to a new position, triggering a full route recalculation
+- [ ] **THEME-01**: App has a consistent dark color scheme (dark backgrounds, light text, accent colors)
+- [ ] **THEME-02**: Typography uses a monospace or technical typeface for labels and data
+- [ ] **THEME-03**: All browser-default form elements are replaced with custom-styled versions
 
-### Routing
+### Controls
 
-- [x] **ROUT-01**: A* pathfinding is computed with full search history recorded before animation begins; route starts and ends at the interpolated point on the source/destination road segment (not just at graph nodes)
-- [x] **ROUT-02**: User can select routing mode: car, bicycle, or pedestrian
-- [x] **ROUT-03**: Routing modes apply different estimated travel speeds and OSM access restrictions (e.g., motorways car-only, pedestrian paths walking-only)
+- [ ] **CTRL-01**: Mode selector (car/bicycle/pedestrian) uses icon-based toggle buttons, not a dropdown
+- [ ] **CTRL-02**: Speed slider is custom-styled to match the dark theme
+- [ ] **CTRL-03**: Animation playback (play/pause/step) styled as media player controls
 
-### Animation
+### Stats HUD
 
-- [x] **ANIM-01**: Search frontier expands node-by-node, rendering visited/frontier nodes visually distinct
-- [x] **ANIM-02**: Optimal path grows in red simultaneously with frontier expansion (pre-calculated, always visible)
-- [x] **ANIM-03**: User can adjust animation speed via a speed slider
+- [ ] **HUD-01**: Stats (distance, travel time, nodes explored) displayed in a separate HUD overlay
+- [ ] **HUD-02**: HUD uses a futuristic/technical visual style (terminal readout or sci-fi data display)
+- [ ] **HUD-03**: HUD only appears when a route is active
 
-### Stats
+## Future Requirements
 
-- [x] **STAT-01**: Live counter shows nodes explored during animation
-- [x] **STAT-02**: Path distance in km is displayed after route is found
-- [x] **STAT-03**: Estimated travel time is displayed, derived from routing mode speeds
-
-## v2 Requirements
-
-### Animation Controls
-
-- **CTRL-01**: User can pause and resume the animation
-- **CTRL-02**: User can step through the animation one node at a time
-- **CTRL-03**: User can reset animation and re-run with the same source/destination
-
-### Comparison
-
-- **COMP-01**: User can run the same route in multiple modes and compare results side by side
-- **COMP-02**: Stats panel shows diff between modes (time, distance, nodes explored)
+*(None identified — UI scope fully defined for v1.1)*
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Server-side routing or tile servers | Fully client-side — no backend |
-| Real-time traffic or dynamic data | Static OSM snapshot only |
-| Turn-by-turn directions or navigation | Visual demo, not GPS app |
-| Multi-stop routing | Single source-to-destination only |
-| Mobile / touch-first UI | Desktop browser demo |
-| Backend API or user accounts | No persistence needed for portfolio demo |
+| Mobile / touch UI | Desktop portfolio demo — v1.0 constraint unchanged |
+| Dark/light theme toggle | Dark-only is the target aesthetic |
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
+*(Populated during roadmap creation)*
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PIPE-01 | Phase 1 | Complete |
-| PIPE-02 | Phase 1 | Complete |
-| PIPE-03 | Phase 2 | Complete |
-| PIPE-04 | Phase 1 | Complete |
-| MAP-01 | Phase 2 | Complete |
-| MAP-02 | Phase 2 | Complete |
-| MAP-03 | Phase 1 | Complete |
-| MAP-04 | Phase 4 | Complete |
-| ROUT-01 | Phase 2 | Complete |
-| ROUT-02 | Phase 2 | Complete |
-| ROUT-03 | Phase 2 | Complete |
-| ANIM-01 | Phase 3 | Complete |
-| ANIM-02 | Phase 3 | Complete |
-| ANIM-03 | Phase 3 | Complete |
-| STAT-01 | Phase 4 | Complete |
-| STAT-02 | Phase 4 | Complete |
-| STAT-03 | Phase 4 | Complete |
+| PANEL-01 | — | Pending |
+| PANEL-02 | — | Pending |
+| PANEL-03 | — | Pending |
+| THEME-01 | — | Pending |
+| THEME-02 | — | Pending |
+| THEME-03 | — | Pending |
+| CTRL-01 | — | Pending |
+| CTRL-02 | — | Pending |
+| CTRL-03 | — | Pending |
+| HUD-01 | — | Pending |
+| HUD-02 | — | Pending |
+| HUD-03 | — | Pending |
 
 **Coverage:**
-- v1 requirements: 17 total
-- Mapped to phases: 17
-- Unmapped: 0
+- v1.1 requirements: 12 total
+- Mapped to phases: 0
+- Unmapped: 12 ⚠️
 
 ---
-*Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after roadmap creation*
+*Requirements defined: 2026-03-15*
+*Last updated: 2026-03-15 after initial definition*
