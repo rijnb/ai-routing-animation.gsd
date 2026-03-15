@@ -13,8 +13,8 @@
 
 ### Theme
 
-- [ ] **THEME-01**: App has a consistent dark color scheme (dark backgrounds, light text, accent colors)
-- [ ] **THEME-02**: Typography uses a distinctive sans-serif typeface (not Arial/system defaults) for labels and data
+- [x] **THEME-01**: App has a consistent dark color scheme (dark backgrounds, light text, accent colors)
+- [x] **THEME-02**: Typography uses a distinctive sans-serif typeface (not Arial/system defaults) for labels and data
 - [ ] **THEME-03**: All browser-default form elements are replaced with custom-styled versions
 
 ### Controls
@@ -44,8 +44,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| THEME-01 | Phase 6 | Pending |
-| THEME-02 | Phase 6 | Pending |
+| THEME-01 | Phase 6 | Complete |
+| THEME-02 | Phase 6 | Complete |
 | THEME-03 | Phase 6 | Pending |
 | PANEL-01 | Phase 7 | Pending |
 | PANEL-02 | Phase 7 | Pending |
